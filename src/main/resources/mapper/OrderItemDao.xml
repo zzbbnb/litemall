@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.litemall.dao.OrderItemDao">
+
+    <resultMap id="BaseResultMap" type="com.example.litemall.model.po.OrderItem">
+        <!--@Table order_item-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="orderId" column="order_id" jdbcType="INTEGER"/>
+        <result property="goodsSkuId" column="goods_sku_id" jdbcType="INTEGER"/>
+        <result property="quantity" column="quantity" jdbcType="INTEGER"/>
+        <result property="price" column="price" jdbcType="INTEGER"/>
+        <result property="discount" column="discount" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="couponId" column="coupon_id" jdbcType="INTEGER"/>
+        <result property="couponActivityId" column="coupon_activity_id" jdbcType="INTEGER"/>
+        <result property="beShareId" column="be_share_id" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+          id, order_id, goods_sku_id, quantity, price, discount, name, coupon_id, coupon_activity_id, be_share_id, gmt_create, gmt_modified
+        from order.order_item
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+          id, order_id, goods_sku_id, quantity, price, discount, name, coupon_id, coupon_activity_id, be_share_id, gmt_create, gmt_modified
+        from order.order_item
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+          id, order_id, goods_sku_id, quantity, price, discount, name, coupon_id, coupon_activity_id, be_share_id, gmt_create, gmt_modified
+        from order.order_item
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="orderId != null">
+                and order_id = #{orderId}
+            </if>
+            <if test="goodsSkuId != null">
+                and goods_sku_id = #{goodsSkuId}
+            </if>
+            <if test="quantity != null">
+                and quantity = #{quantity}
+            </if>
+            <if test="price != null">
+                and price = #{price}
+            </if>
+            <if test="discount != null">
+                and discount = #{discount}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="couponId != null">
+                and coupon_id = #{couponId}
+            </if>
+            <if test="couponActivityId != null">
+                and coupon_activity_id = #{couponActivityId}
+            </if>
+            <if test="beShareId != null">
+                and be_share_id = #{beShareId}
+            </if>
+            <if test="gmtCreate != null">
+                and gmt_create = #{gmtCreate}
+            </if>
+            <if test="gmtModified != null">
+                and gmt_modified = #{gmtModified}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into order.order_item(order_id, goods_sku_id, quantity, price, discount, name, coupon_id, coupon_activity_id, be_share_id, gmt_create, gmt_modified)
+        values (#{orderId}, #{goodsSkuId}, #{quantity}, #{price}, #{discount}, #{name}, #{couponId}, #{couponActivityId}, #{beShareId}, #{gmtCreate}, #{gmtModified})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update order.order_item
+        <set>
+            <if test="orderId != null">
+                order_id = #{orderId},
+            </if>
+            <if test="goodsSkuId != null">
+                goods_sku_id = #{goodsSkuId},
+            </if>
+            <if test="quantity != null">
+                quantity = #{quantity},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="discount != null">
+                discount = #{discount},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="couponId != null">
+                coupon_id = #{couponId},
+            </if>
+            <if test="couponActivityId != null">
+                coupon_activity_id = #{couponActivityId},
+            </if>
+            <if test="beShareId != null">
+                be_share_id = #{beShareId},
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create = #{gmtCreate},
+            </if>
+            <if test="gmtModified != null">
+                gmt_modified = #{gmtModified},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from order.order_item where id = #{id}
+    </delete>
+
+</mapper>

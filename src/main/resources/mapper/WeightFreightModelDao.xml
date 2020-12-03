@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.litemall.dao.WeightFreightModelDao">
+
+    <resultMap id="BaseResultMap" type="com.example.litemall.model.po.WeightFreightModel">
+        <!--@Table weight_freight_model-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="freightModelId" column="freight_model_id" jdbcType="INTEGER"/>
+        <result property="firstWeight" column="first_weight" jdbcType="INTEGER"/>
+        <result property="firstWeightFreight" column="first_weight_freight" jdbcType="INTEGER"/>
+        <result property="tenPrice" column="ten_price" jdbcType="INTEGER"/>
+        <result property="fiftyPrice" column="fifty_price" jdbcType="INTEGER"/>
+        <result property="hundredPrice" column="hundred_price" jdbcType="INTEGER"/>
+        <result property="trihunPrice" column="trihun_price" jdbcType="INTEGER"/>
+        <result property="abovePrice" column="above_price" jdbcType="INTEGER"/>
+        <result property="regionId" column="region_id" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+        <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+          id, freight_model_id, first_weight, first_weight_freight, ten_price, fifty_price, hundred_price, trihun_price, above_price, region_id, gmt_create, gmt_modified
+        from order.weight_freight_model
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+          id, freight_model_id, first_weight, first_weight_freight, ten_price, fifty_price, hundred_price, trihun_price, above_price, region_id, gmt_create, gmt_modified
+        from order.weight_freight_model
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+          id, freight_model_id, first_weight, first_weight_freight, ten_price, fifty_price, hundred_price, trihun_price, above_price, region_id, gmt_create, gmt_modified
+        from order.weight_freight_model
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="freightModelId != null">
+                and freight_model_id = #{freightModelId}
+            </if>
+            <if test="firstWeight != null">
+                and first_weight = #{firstWeight}
+            </if>
+            <if test="firstWeightFreight != null">
+                and first_weight_freight = #{firstWeightFreight}
+            </if>
+            <if test="tenPrice != null">
+                and ten_price = #{tenPrice}
+            </if>
+            <if test="fiftyPrice != null">
+                and fifty_price = #{fiftyPrice}
+            </if>
+            <if test="hundredPrice != null">
+                and hundred_price = #{hundredPrice}
+            </if>
+            <if test="trihunPrice != null">
+                and trihun_price = #{trihunPrice}
+            </if>
+            <if test="abovePrice != null">
+                and above_price = #{abovePrice}
+            </if>
+            <if test="regionId != null">
+                and region_id = #{regionId}
+            </if>
+            <if test="gmtCreate != null">
+                and gmt_create = #{gmtCreate}
+            </if>
+            <if test="gmtModified != null">
+                and gmt_modified = #{gmtModified}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into order.weight_freight_model(freight_model_id, first_weight, first_weight_freight, ten_price, fifty_price, hundred_price, trihun_price, above_price, region_id, gmt_create, gmt_modified)
+        values (#{freightModelId}, #{firstWeight}, #{firstWeightFreight}, #{tenPrice}, #{fiftyPrice}, #{hundredPrice}, #{trihunPrice}, #{abovePrice}, #{regionId}, #{gmtCreate}, #{gmtModified})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update order.weight_freight_model
+        <set>
+            <if test="freightModelId != null">
+                freight_model_id = #{freightModelId},
+            </if>
+            <if test="firstWeight != null">
+                first_weight = #{firstWeight},
+            </if>
+            <if test="firstWeightFreight != null">
+                first_weight_freight = #{firstWeightFreight},
+            </if>
+            <if test="tenPrice != null">
+                ten_price = #{tenPrice},
+            </if>
+            <if test="fiftyPrice != null">
+                fifty_price = #{fiftyPrice},
+            </if>
+            <if test="hundredPrice != null">
+                hundred_price = #{hundredPrice},
+            </if>
+            <if test="trihunPrice != null">
+                trihun_price = #{trihunPrice},
+            </if>
+            <if test="abovePrice != null">
+                above_price = #{abovePrice},
+            </if>
+            <if test="regionId != null">
+                region_id = #{regionId},
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create = #{gmtCreate},
+            </if>
+            <if test="gmtModified != null">
+                gmt_modified = #{gmtModified},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from order.weight_freight_model where id = #{id}
+    </delete>
+
+</mapper>
