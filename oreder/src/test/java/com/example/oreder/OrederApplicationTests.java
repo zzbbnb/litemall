@@ -1,14 +1,13 @@
-package com.example.litemall;
+package com.example.oreder;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LitemallApplicationTests {
+class OrederApplicationTests {
 
     @Test
     void contextLoads() {
-        System.out.println("dsds");
     }
 
 }

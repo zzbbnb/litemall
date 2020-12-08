@@ -1,14 +1,13 @@
-package com.example.litemall;
+package com.example.payment;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LitemallApplicationTests {
+class PaymentApplicationTests {
 
     @Test
     void contextLoads() {
-        System.out.println("dsds");
     }
 
 }
