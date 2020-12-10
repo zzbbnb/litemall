@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 /**
  * @program: core
@@ -25,6 +26,6 @@ public class WeightFreightModelPo {
     Long trihunPrice;
     Long abovePrice;
     Long regionId;
-    Date gmtCreate;
-    Date gmtModified;
+    LocalDateTime gmtCreate;
+    LocalDateTime gmtModified;
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 /**
  * @program: core
@@ -22,6 +23,6 @@ public class FreightModelPo {
     String name;
     boolean defaultModel;
     int type;
-    Date gmtCreate;
-    Date gmtModified;
+    LocalDateTime gmtCreate;
+    LocalDateTime gmtModified;
 }

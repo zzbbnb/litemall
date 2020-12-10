@@ -27,7 +27,20 @@ public class FreightService {
     * @Author: alex101
     * @Date: 2020/12/9 
     */
-    public ReturnObject setDefaultFreightModel(@PathVariable Long shopId, @PathVariable Long id) {
+    public ReturnObject setDefaultFreightModel(Long shopId, Long id) {
         return freightModelDao.setDefaultFreightModel(shopId,id);
+    }
+
+    /*
+    /** 
+    * @Description: 返回模板概要 
+    * @Param: [shopId, id] 
+    * @return: cn.edu.xmu.ooad.util.ReturnObject 
+    * @Author: alex101
+    * @Date: 2020/12/10 
+    */
+    public ReturnObject getFreightModelSummary(Long shopId,Long id)
+    {
+        return freightModelDao.getFreightModelSummary(shopId,id);
     }
 }
