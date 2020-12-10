@@ -4,6 +4,7 @@ import cn.edu.xmu.ooad.annotation.Audit;
 import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
+import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.freight.service.FreightService;
 import io.swagger.annotations.*;
@@ -11,9 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @program: core
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author: alex101
  * @create: 2020-12-09 16:57
  **/
-@Controller
+@RestController
 @RequestMapping(value = "/freight", produces = "application/json;charset=UTF-8")
 public class FreightController {
 
@@ -51,15 +50,49 @@ public class FreightController {
     })
     @Audit
     @PostMapping("shops/{shopId}/freight_models/{id}/default")
+    @ResponseBody
     public Object setDefaultFreightModel(@PathVariable Long shopId, @PathVariable Long id)
     {
         logger.debug("setDefaultFreightModel shopid = "+shopId+" id = "+id);
         ReturnObject returnObject = freightService.setDefaultFreightModel(shopId,id);
         if (returnObject.getCode() == ResponseCode.OK) {
-            return Common.getListRetObject(returnObject);
+            return Common.getRetObject(returnObject);
         } else {
             return Common.decorateReturnObject(returnObject);
         }
 
     }
+
+
+    /*
+    /** 
+    * @Description: 返回模板概要
+    * @Param: [shopId, id] 
+    * @return: java.lang.Object 
+    * @Author: alex101
+    * @Date: 2020/12/10 
+    */
+    @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header",dataType = "String",name = "authorization",value = "Token",required = true),
+            @ApiImplicitParam(name = "shopId",value ="商户ID",required = true,dataType = "Integer",paramType = "path"),
+            @ApiImplicitParam(name = "id",value ="id",required = true,dataType = "Integer",paramType = "path")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,message = "成功"),
+            @ApiResponse(code = 504, message = "操作id不存在")
+    })
+
+    @Audit
+    @GetMapping("/shops/{shopId}/freightmodels/{id}")
+    @ResponseBody
+    public Object getFreightModelSummary(@PathVariable Long shopId,@PathVariable Long id)
+    {
+        logger.debug("getFreightModelSummary shopId: "+shopId+" id = "+id);
+        ReturnObject returnObject = freightService.getFreightModelSummary(shopId,id);
+        return Common.decorateReturnObject(returnObject);
+    }
+
+
+
 }
