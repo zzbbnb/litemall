@@ -2,11 +2,14 @@ package com.example.freight.dao;
 
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.freight.controller.FreightController;
 import com.example.freight.mapper.FreightModelMapper;
 import com.example.freight.model.bo.FreightModelBo;
 import com.example.freight.model.po.FreightModelPo;
+import com.example.freight.model.vo.FreightModelInfoVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +106,38 @@ public class FreightModelDao {
         }
         return returnObject;
     }
+    /**
+    * @Description: 增加运费模板
+    * @Param:
+    * @return:
+    * @Author: alex101
+    * @Date: 2020/12/11
+    */
+    public ReturnObject addFreightModel(Long id, FreightModelInfoVo vo)
+    {
+        ReturnObject returnObject;
+        FreightModelBo freightModelBo = new FreightModelBo();
+        freightModelBo.setShopId(id);
+        freightModelBo.setType(vo.getType());
+        freightModelBo.setUnit(vo.getUnit());
+        freightModelBo.setName(vo.getName());
+        FreightModelPo freightModelPo = (FreightModelPo) freightModelBo.createPo();
+        QueryWrapper<FreightModelPo> queryWrapper = new QueryWrapper<FreightModelPo>();
+        queryWrapper.eq("name",freightModelPo.getName());
+        int count = freightModelMapper.selectCount(queryWrapper);
+        if(count>0){
+            returnObject = new ReturnObject(ResponseCode.FREIGHTNAME_SAME);
+        }else {
+            freightModelMapper.insert(freightModelPo);
+
+            FreightModelPo freightModelPo1= freightModelMapper.selectOne(queryWrapper);
+            FreightModelBo freightModelBo1 = new FreightModelBo(freightModelPo1);
+            returnObject = new ReturnObject<>(freightModelBo1);
+        }
+        return returnObject;
+    }
+
+
 
 
     /*
