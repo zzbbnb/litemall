@@ -6,6 +6,7 @@ import com.example.freight.mapper.FreightModelMapper;
 import com.example.freight.model.po.FreightModelPo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
 /**
@@ -42,5 +43,18 @@ public class FreightService {
     public ReturnObject getFreightModelSummary(Long shopId,Long id)
     {
         return freightModelDao.getFreightModelSummary(shopId,id);
+    }
+
+    /*
+     * @Description: 管理员克隆店铺的运费模板
+     * @Param:  [shopId, id]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/10
+     **/
+    @Transactional
+    public ReturnObject cloneFreightModel(@PathVariable Long shopId, @PathVariable Long id)
+    {
+        return freightModelDao.cloneFreightModel(shopId, id);
     }
 }
