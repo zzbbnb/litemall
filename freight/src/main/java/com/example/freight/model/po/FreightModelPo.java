@@ -18,11 +18,12 @@ import java.time.LocalDateTime;
 @Data
 public class FreightModelPo {
     @TableId(type= IdType.AUTO)
-    Long id;
-    Long shopId;
-    String name;
-    boolean defaultModel;
-    int type;
-    LocalDateTime gmtCreate;
-    LocalDateTime gmtModified;
+    private Long id;
+    private Long shopId;
+    private String name;
+    private boolean defaultModel;
+    private int unit;
+    private int type;
+    private LocalDateTime gmtCreate;
+    private LocalDateTime gmtModified;
 }
