@@ -4,6 +4,7 @@ import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.freight.dao.FreightModelDao;
 import com.example.freight.mapper.FreightModelMapper;
 import com.example.freight.model.po.FreightModelPo;
+import com.example.freight.model.vo.FreightModelInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,5 +43,10 @@ public class FreightService {
     public ReturnObject getFreightModelSummary(Long shopId,Long id)
     {
         return freightModelDao.getFreightModelSummary(shopId,id);
+    }
+
+    public ReturnObject addFreightModel(Long id,FreightModelInfoVo vo)
+    {
+        return freightModelDao.addFreightModel(id,vo);
     }
 }

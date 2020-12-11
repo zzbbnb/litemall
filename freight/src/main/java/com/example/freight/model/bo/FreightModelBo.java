@@ -27,6 +27,9 @@ public class FreightModelBo implements VoObject {
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
 
+    public FreightModelBo() {
+    }
+
     public FreightModelBo(FreightModelPo freightModelPo)
     {
         id = freightModelPo.getId();
@@ -51,5 +54,18 @@ public class FreightModelBo implements VoObject {
     @Override
     public Object createSimpleVo() {
         return null;
+    }
+
+    public Object createPo()
+    {
+        FreightModelPo freightModelPo=  new FreightModelPo();
+        freightModelPo.setName(this.name);
+        freightModelPo.setShopId(this.shopId);
+        freightModelPo.setGmtCreate(LocalDateTime.now());
+        freightModelPo.setDefaultModel(false);
+        freightModelPo.setGmtModified(this.getGmtCreate());
+        freightModelPo.setUnit(this.unit);
+        freightModelPo.setType(this.type);
+        return freightModelPo;
     }
 }
