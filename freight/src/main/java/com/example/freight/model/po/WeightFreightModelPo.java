@@ -16,16 +16,16 @@ import java.time.LocalDateTime;
 @TableName("weight_freight_model")
 public class WeightFreightModelPo {
     @TableId(type= IdType.AUTO)
-    Long id;
-    Long freightModelId;
-    Long firstWeight;
-    Long firstWeightFreight;
-    Long tenPrice;
-    Long fiftyPrice;
-    Long hundredPrice;
-    Long trihunPrice;
-    Long abovePrice;
-    Long regionId;
-    LocalDateTime gmtCreate;
-    LocalDateTime gmtModified;
+    private Long id;
+    private Long freightModelId;
+    private Long firstWeight;
+    private Long firstWeightFreight;
+    private Long tenPrice;
+    private Long fiftyPrice;
+    private Long hundredPrice;
+    private Long trihunPrice;
+    private Long abovePrice;
+    private Long regionId;
+    private LocalDateTime gmtCreate;
+    private LocalDateTime gmtModified;
 }

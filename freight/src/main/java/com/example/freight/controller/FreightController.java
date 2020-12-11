@@ -90,7 +90,12 @@ public class FreightController {
     {
         logger.debug("getFreightModelSummary shopId: "+shopId+" id = "+id);
         ReturnObject returnObject = freightService.getFreightModelSummary(shopId,id);
-        return Common.decorateReturnObject(returnObject);
+        if(returnObject.getCode()==ResponseCode.OK)
+        {
+            return Common.getRetObject(returnObject);
+        }else {
+            return Common.decorateReturnObject(returnObject);
+        }
     }
 
 
