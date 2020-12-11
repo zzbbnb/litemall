@@ -6,6 +6,7 @@ import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
+import com.example.freight.model.vo.FreightModelInfoVo;
 import com.example.freight.service.FreightService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -90,6 +91,28 @@ public class FreightController {
     {
         logger.debug("getFreightModelSummary shopId: "+shopId+" id = "+id);
         ReturnObject returnObject = freightService.getFreightModelSummary(shopId,id);
+        if(returnObject.getCode()==ResponseCode.OK)
+        {
+            return Common.getRetObject(returnObject);
+        }else {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+    /*
+    /** 
+    * @Description: 增加运费模板 
+    * @Param: [id, vo] 
+    * @return: java.lang.Object 
+    * @Author: alex101
+    * @Date: 2020/12/11 
+    */
+    @Audit
+    @PostMapping("/shops/{id}/freightmodels")
+    public Object addFreightModel(@PathVariable Long id, @RequestBody  FreightModelInfoVo vo)
+    {
+        logger.debug("set freight model id: "+id+" feightmodel info "+ vo);
+        ReturnObject returnObject = freightService.addFreightModel(id,vo);
         if(returnObject.getCode()==ResponseCode.OK)
         {
             return Common.getRetObject(returnObject);
