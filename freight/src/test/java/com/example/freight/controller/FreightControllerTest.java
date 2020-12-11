@@ -119,18 +119,17 @@ public class FreightControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         System.out.println(responseString);
-        String expectedResponse = "{\n" +
-                "  \"errno\": \"0\",\n" +
-                "  \"errmsg\": \"成功\",\n" +
-                "  \"data\": {\n" +
-                "    \"id\": 2,\n" +
-                "    \"name\": \"3SP3CG\",\n" +
-                "    \"type\": 0,\n" +
-                "    \"unit\": 15,\n" +
-                "    \"default\": 0,\n" +
-                "    \"gmtCreate\": \"2020-12-10 09:33:28\",\n" +
-                "    \"gmtModified\": \"2020-12-10 09:33:28\"\n" +
-                "  }\n" +
+        String expectedResponse = "{" +
+                "\"errno\":0," +
+                " \"data\":{" +
+                " \"id\":2," +
+                " \"name\":\"3SP3CG\"," +
+                "\"type\":0," +
+                "\"unit\":15," +
+                "\"default\":0," +
+                "\"gmtCreate\":\"2020-12-10 09:33:28\"," +
+                "\"gmtModified\":\"2020-12-10 09:33:28\"" +
+                "}," + "\"errmsg\":\"成功\"" +
                 "}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }

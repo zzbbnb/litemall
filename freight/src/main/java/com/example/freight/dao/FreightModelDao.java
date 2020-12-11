@@ -5,6 +5,7 @@ import cn.edu.xmu.ooad.util.ReturnObject;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.freight.controller.FreightController;
 import com.example.freight.mapper.FreightModelMapper;
+import com.example.freight.model.bo.FreightModelBo;
 import com.example.freight.model.po.FreightModelPo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,8 @@ import java.util.List;
 @Component
 public class FreightModelDao {
 
+    private static final int weightType = 0;
+    private static final int peiceType = 1;
     private static final Logger logger = LoggerFactory.getLogger(FreightController.class);
 
     @Autowired
@@ -50,11 +53,13 @@ public class FreightModelDao {
         {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
             logger.error("not found freightModel shopid = "+shopId+" id = "+id);
-        }else if(!freightModelPo.getShopId().equals(shopId))
-        {
+        }else if(!freightModelPo.getShopId().equals(shopId)) {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
             logger.error("freightModel shop Id:"+freightModelPo.getShopId()+" not equal to path shop Id:"+shopId);
-        }else {
+        }else if(freightModelPo.getType()==peiceType) {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            logger.error("can't set piece type model to default "+freightModelPo.getId());
+        } else{
             /*将原始的默认模板取消*/
             UpdateWrapper<FreightModelPo> updateWrapper = new UpdateWrapper<>();
             updateWrapper.eq("default_model",true).set("default_model",false).set("gmt_modified",LocalDateTime.now());
@@ -70,6 +75,7 @@ public class FreightModelDao {
         }
         return returnObject;
     }
+
 
     /*
     /** 
@@ -91,11 +97,10 @@ public class FreightModelDao {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
             logger.error("freightModel shop Id:" + freightModelPo.getShopId() + " not equal to path shop Id:" + shopId);
         }else {
-            returnObject = new ReturnObject<>(freightModelPo);
+            FreightModelBo freightModelBo = new FreightModelBo(freightModelPo);
+            returnObject = new ReturnObject<>(freightModelBo);
         }
         return returnObject;
-
-
     }
 
 }
