@@ -56,7 +56,7 @@ public class FreightService {
     {
         return freightModelDao.getFreightModelSummary(shopId,id);
     }
-
+    
     /**
     * @Description: 增加运费模板
     * @Param: [id, vo]
@@ -69,6 +69,7 @@ public class FreightService {
     {
         return freightModelDao.addFreightModel(id,vo);
     }
+
     /*
      * @Description: 管理员克隆店铺的运费模板
      * @Param:  [shopId, id]
