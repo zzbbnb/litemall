@@ -3,13 +3,16 @@ package com.example.freight.dao;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.freight.controller.FreightController;
 import com.example.freight.mapper.FreightModelMapper;
 import com.example.freight.mapper.WeightFreightModelMapper;
 import com.example.freight.model.bo.WeightFreightModelBo;
 import com.example.freight.model.po.FreightModelPo;
+import com.example.freight.model.po.PieceFreightModelPo;
 import com.example.freight.model.po.WeightFreightModelPo;
-import com.example.freight.model.vo.WeightModelInfoVo;
+import com.example.freight.model.vo.PieceFreightModelInfoVo;
+import com.example.freight.model.vo.WeightFreightModelInfoVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,7 @@ public class WeightFreightDao {
 
     @Autowired
     FreightModelMapper mapper;
-    public ReturnObject insertWeightItems(Long shopId, Long id, WeightModelInfoVo vo)
+    public ReturnObject insertWeightItems(Long shopId, Long id, WeightFreightModelInfoVo vo)
     {
 
         ReturnObject<Object> returnObject;
@@ -97,4 +100,77 @@ public class WeightFreightDao {
         return returnObject;
     }
 
+
+    /**
+     * @Description: 店家或管理员修改重量运费模板明细
+     * @Param:  [id, weightFreightModelInfoVo]
+     * @return: {@link ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     */
+    public ReturnObject putWeightItems(Long id, WeightFreightModelInfoVo weightFreightModelInfoVo)
+    {
+        ReturnObject returnObject;
+        QueryWrapper<WeightFreightModelPo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", id);
+        WeightFreightModelPo weightFreightModelPo = weightFreightModelMapper.selectOne(queryWrapper);
+
+        QueryWrapper<WeightFreightModelPo> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("regionId", weightFreightModelInfoVo.getRegionId());
+        WeightFreightModelPo weightFreightModelPo1 = weightFreightModelMapper.selectOne(queryWrapper1);
+
+        if(weightFreightModelPo == null)
+        {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }
+        else if(weightFreightModelPo1 != null)
+        {
+            returnObject = new ReturnObject<>(ResponseCode.REGION_SAME);
+        }
+        else
+        {
+            UpdateWrapper<WeightFreightModelPo> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("id", id);
+
+            weightFreightModelPo.setGmtModified(LocalDateTime.now());
+            weightFreightModelPo.setRegionId(weightFreightModelInfoVo.getRegionId());
+
+            weightFreightModelPo.setAbovePrice(weightFreightModelInfoVo.getAbovePrice());
+            weightFreightModelPo.setFiftyPrice(weightFreightModelInfoVo.getFiftyPrice());
+            weightFreightModelPo.setFirstWeight(weightFreightModelInfoVo.getFirstWeight());
+            weightFreightModelPo.setFreightModelId(id);
+            weightFreightModelPo.setHundredPrice(weightFreightModelInfoVo.getHundredPrice());
+            weightFreightModelPo.setTenPrice(weightFreightModelInfoVo.getTenPrice());
+            weightFreightModelPo.setTrihunPrice(weightFreightModelInfoVo.getTrihunPrice());
+
+
+            weightFreightModelMapper.update(weightFreightModelPo, updateWrapper);
+            returnObject = new ReturnObject<>(ResponseCode.OK);
+        }
+        return returnObject;
+    }
+
+
+    /**
+     * @Description: 店家或管理员删掉重量运费模板明细
+     * @Param:  [id]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     */
+    public ReturnObject delWeightItems(Long id)
+    {
+        ReturnObject returnObject;
+        QueryWrapper<WeightFreightModelPo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", id);
+        WeightFreightModelPo weightFreightModelPo = weightFreightModelMapper.selectOne(queryWrapper);
+
+        if(weightFreightModelPo == null)
+        {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }
+        weightFreightModelMapper.delete(queryWrapper);
+        returnObject = new ReturnObject<>(ResponseCode.OK);
+        return returnObject;
+    }
 }
