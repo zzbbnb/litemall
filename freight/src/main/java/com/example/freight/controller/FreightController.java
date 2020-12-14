@@ -7,9 +7,12 @@ import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
+import com.example.freight.model.bo.FreightModelBo;
 import com.example.freight.model.vo.FreightModelInfoVo;
+import com.example.freight.model.vo.ItemVo;
 import com.example.freight.model.vo.WeightModelInfoVo;
 import com.example.freight.service.FreightService;
+import com.example.freight.service.IFreightModelService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -20,6 +23,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @program: core
@@ -37,18 +42,19 @@ public class FreightController {
     @Autowired
     FreightService freightService;
 
+    @Autowired
+    IFreightModelService iFreightModelService;
+
     //此处需要有一个删除商品关联的运费模板信息的dubbo服务
 
 
-
-
     /**
-    * @Description: 管理员设置默认运费模板
-    * @Param: [shopId, id]
-    * @return: java.lang.Object
-    * @Author: alex101
-    * @Date: 2020/12/9
-    */
+     * @Description: 管理员设置默认运费模板
+     * @Param: [shopId, id]
+     * @return: java.lang.Object
+     * @Author: alex101
+     * @Date: 2020/12/9
+     */
     @ApiOperation(value = "设置默认运费模板")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
@@ -74,14 +80,13 @@ public class FreightController {
     }
 
 
-
-    /** 
-    * @Description: 返回模板概要
-    * @Param: [shopId, id] 
-    * @return: java.lang.Object 
-    * @Author: alex101
-    * @Date: 2020/12/10 
-    */
+    /**
+     * @Description: 返回模板概要
+     * @Param: [shopId, id]
+     * @return: java.lang.Object
+     * @Author: alex101
+     * @Date: 2020/12/10
+     */
     @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
@@ -107,13 +112,13 @@ public class FreightController {
     }
 
 
-    /** 
-    * @Description: 增加运费模板 
-    * @Param: [id, vo] 
-    * @return: java.lang.Object 
-    * @Author: alex101
-    * @Date: 2020/12/11 
-    */
+    /**
+     * @Description: 增加运费模板
+     * @Param: [id, vo]
+     * @return: java.lang.Object
+     * @Author: alex101
+     * @Date: 2020/12/11
+     */
     @Audit
     @PostMapping("/shops/{id}/freightmodels")
     public Object addFreightModel(@PathVariable Long id, @RequestBody FreightModelInfoVo vo) {
@@ -127,48 +132,27 @@ public class FreightController {
     }
 
 
-    /** 
-    * @Description: 获取店铺中商品的运费模板
-    * @Param: [id, name, page, pageSize] 
-    * @return: java.lang.Object 
-    * @Author: alex101
-    * @Date: 2020/12/12 
-    */
+    /**
+     * @Description: 获取店铺中商品的运费模板
+     * @Param: [id, name, page, pageSize]
+     * @return: java.lang.Object
+     * @Author: alex101
+     * @Date: 2020/12/12
+     */
     @Audit
     @GetMapping("/shops/{id}/freightmodels")
-    public Object getGoodsFreightModels(@PathVariable Long id, @RequestParam(required = false) String name, @RequestParam(required = false)  Integer page, @RequestParam(required = false) Integer pageSize)
-    {
-        logger.debug("getGoodsFreightModels: page = "+ page +"  pageSize ="+pageSize+" name="+name);
-        page = (page == null)?1:page;
-        pageSize = (pageSize == null)?10:pageSize;
-        ReturnObject<PageInfo<VoObject>> returnObject = freightService.getGoodsFreightModel(id,name,page,pageSize);
+    public Object getGoodsFreightModels(@PathVariable Long id, @RequestParam(required = false) String name, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
+        logger.debug("getGoodsFreightModels: page = " + page + "  pageSize =" + pageSize + " name=" + name);
+        page = (page == null) ? 1 : page;
+        pageSize = (pageSize == null) ? 10 : pageSize;
+        ReturnObject<PageInfo<VoObject>> returnObject = freightService.getGoodsFreightModel(id, name, page, pageSize);
         return Common.getPageRetObject(returnObject);
     }
 
     @Audit
     @PutMapping("/shops/{shopId}/freightmodels/{id}")
-    public Object modifyFreightModel(@PathVariable Long shopId,@PathVariable Long id,@RequestBody FreightModelInfoVo vo)
-    {
-        ReturnObject returnObject = freightService.modifyFreightModel(shopId,id,vo);
-        if (returnObject.getCode() == ResponseCode.OK) {
-            return Common.getRetObject(returnObject);
-        } else {
-            return Common.decorateReturnObject(returnObject);
-        }
-    }
-
-    /** 删除运费模板
-    * @Description:
-    * @Param: [shopId, id]
-    * @return: java.lang.Object
-    * @Author: alex101
-    * @Date: 2020/12/14
-    */
-    @Audit
-    @DeleteMapping("/shops/{shopId}/freightmodels/{id}")
-    public Object deleteFreightModel(@PathVariable Long shopId,@PathVariable Long id)
-    {
-        ReturnObject returnObject = freightService.deleteFreightModel(shopId,id);
+    public Object modifyFreightModel(@PathVariable Long shopId, @PathVariable Long id, @RequestBody FreightModelInfoVo vo) {
+        ReturnObject returnObject = freightService.modifyFreightModel(shopId, id, vo);
         if (returnObject.getCode() == ResponseCode.OK) {
             return Common.getRetObject(returnObject);
         } else {
@@ -177,21 +161,40 @@ public class FreightController {
     }
 
     /**
-    * @Description:  新增重量明细
-    * @Param: [shopId, id, vo, result, httpServletResponse]
-    * @return: java.lang.Object
-    * @Author: alex101
-    * @Date: 2020/12/14
-    */
+     * 删除运费模板
+     *
+     * @Description:
+     * @Param: [shopId, id]
+     * @return: java.lang.Object
+     * @Author: alex101
+     * @Date: 2020/12/14
+     */
+    @Audit
+    @DeleteMapping("/shops/{shopId}/freightmodels/{id}")
+    public Object deleteFreightModel(@PathVariable Long shopId, @PathVariable Long id) {
+        ReturnObject returnObject = freightService.deleteFreightModel(shopId, id);
+        if (returnObject.getCode() == ResponseCode.OK) {
+            return Common.getRetObject(returnObject);
+        } else {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+    /**
+     * @Description: 新增重量明细
+     * @Param: [shopId, id, vo, result, httpServletResponse]
+     * @return: java.lang.Object
+     * @Author: alex101
+     * @Date: 2020/12/14
+     */
     @Audit
     @PostMapping("/shops/{shopId}/freightmodels/{id}/weightItems")
-    public Object addWeightItems(@PathVariable Long shopId, @PathVariable Long id, @RequestBody WeightModelInfoVo vo, BindingResult result, HttpServletResponse httpServletResponse)
-    {
+    public Object addWeightItems(@PathVariable Long shopId, @PathVariable Long id, @RequestBody WeightModelInfoVo vo, BindingResult result, HttpServletResponse httpServletResponse) {
         Object o = Common.processFieldErrors(result, httpServletResponse);
-        if(o != null){
+        if (o != null) {
             return o;
         }
-        ReturnObject returnObject = freightService.addWeightItem(shopId,id,vo);
+        ReturnObject returnObject = freightService.addWeightItem(shopId, id, vo);
         if (returnObject.getCode() == ResponseCode.OK) {
             return Common.getRetObject(returnObject);
         } else {
@@ -201,9 +204,8 @@ public class FreightController {
 
     @Audit
     @GetMapping("/shops/{shopId}/freightmodels/{id}/weightItems")
-    public Object getWeightItems(@PathVariable Long shopId,@PathVariable Long id)
-    {
-        ReturnObject returnObject  = freightService.getWeightItem(shopId,id);
+    public Object getWeightItems(@PathVariable Long shopId, @PathVariable Long id) {
+        ReturnObject returnObject = freightService.getWeightItem(shopId, id);
         if (returnObject.getCode() == ResponseCode.OK) {
             return Common.getListRetObject(returnObject);
         } else {
@@ -220,30 +222,41 @@ public class FreightController {
      **/
     @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/clone")
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header",dataType = "String",name = "authorization",value = "Token",required = true),
-            @ApiImplicitParam(name = "shopId",value ="商户ID",required = true,dataType = "Integer",paramType = "path"),
-            @ApiImplicitParam(name = "id",value ="id",required = true,dataType = "Integer",paramType = "path")
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
+            @ApiImplicitParam(name = "shopId", value = "商户ID", required = true, dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Integer", paramType = "path")
     })
     @ApiResponses({
-            @ApiResponse(code = 0,message = "成功"),
+            @ApiResponse(code = 0, message = "成功"),
             @ApiResponse(code = 504, message = "操作id不存在")
     })
 
     @Audit
     @PostMapping("shops/{shopId}/freightmodels/{id}/clone")
     @ResponseBody
-    public Object cloneFreightModel(@PathVariable Long shopId, @PathVariable Long id)
-    {
-        logger.debug("cloneFreightModel shopId:"+shopId+" id = "+id);
+    public Object cloneFreightModel(@PathVariable Long shopId, @PathVariable Long id) {
+        logger.debug("cloneFreightModel shopId:" + shopId + " id = " + id);
         ReturnObject returnObject = freightService.cloneFreightModel(shopId, id);
-        if (returnObject.getCode() == ResponseCode.OK)
-        {
+        if (returnObject.getCode() == ResponseCode.OK) {
             return Common.getRetObject(returnObject);
-        }
-        else
-        {
+        } else {
             return Common.decorateReturnObject(returnObject);
         }
+    }
+
+    @Audit
+    @PostMapping("region/{rid}/price")
+    public Object getFreight(@PathVariable Long rid, @RequestBody List<ItemVo> items)
+    {
+        logger.debug("compute freight: region id: " +rid + " items = " + items);
+        List<FreightModelBo> freightModelBoList = new ArrayList<>();
+        List<Integer> skuWeight = new ArrayList<>();
+        for(ItemVo itemVo:items)
+        {
+            freightModelBoList.add(iFreightModelService.getFreightIdBySkuId(itemVo.getSkuId()));
+            skuWeight.add(iFreightModelService.getWeightBySkuId(itemVo.getSkuId()));
+        }
+
     }
 
 

@@ -8,6 +8,7 @@ import com.example.freight.mapper.FreightModelMapper;
 import com.example.freight.model.bo.FreightModelBo;
 import com.example.freight.model.po.FreightModelPo;
 import com.example.freight.model.vo.FreightModelInfoVo;
+import com.example.freight.model.vo.ItemVo;
 import com.example.freight.model.vo.WeightModelInfoVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.naming.Name;
+import java.util.List;
 
 /**
  * @program: core
@@ -56,7 +58,7 @@ public class FreightService {
     {
         return freightModelDao.getFreightModelSummary(shopId,id);
     }
-    
+
     /**
     * @Description: 增加运费模板
     * @Param: [id, vo]
@@ -109,6 +111,23 @@ public class FreightService {
     public ReturnObject getWeightItem(Long shopId,Long id)
     {
         return weightFreightDao.getWeightItem(shopId,id);
+    }
+
+    public ReturnObject getFreight(List<FreightModelBo> freightModelBoList,List<Integer> skuWeight,List<ItemVo> items,int rid)
+    {
+
+        int len = skuWeight.size();
+        for(int i=0;i<len;i++)
+        {
+            if(freightModelBoList.get(i)==null)
+            {
+                freightModelBoList.set(i,freightModelDao.getDefaultFreightModel());
+            }
+            if(freightModelBoList.get(i).getType()==0)
+            {
+
+            }
+        }
     }
 
 
