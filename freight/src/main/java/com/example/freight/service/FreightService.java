@@ -1,15 +1,13 @@
 package com.example.freight.service;
 
-import cn.edu.xmu.ooad.model.VoObject;
+import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.freight.dao.FreightModelDao;
-import com.example.freight.dao.WeightFreightDao;
-import com.example.freight.mapper.FreightModelMapper;
+import com.example.freight.dao.PieceFreightDao;
 import com.example.freight.model.bo.FreightModelBo;
-import com.example.freight.model.po.FreightModelPo;
-import com.example.freight.model.vo.FreightModelInfoVo;
-import com.example.freight.model.vo.ItemVo;
-import com.example.freight.model.vo.WeightModelInfoVo;
+import com.example.freight.model.vo.*;
+import cn.edu.xmu.ooad.model.VoObject;
+import com.example.freight.dao.WeightFreightDao;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.mysql.cj.jdbc.jmx.LoadBalanceConnectionGroupManager;
@@ -26,13 +24,16 @@ import java.util.List;
  * @description: 运费服务
  * @author: alex101
  * @create: 2020-12-09 17:43
- **/
+ */
 @Service
 public class FreightService {
     @Autowired
     FreightModelDao freightModelDao;
 
     @Autowired
+
+    PieceFreightDao pieceFreightDao;
+
     WeightFreightDao weightFreightDao;
 
     /** 
@@ -72,17 +73,150 @@ public class FreightService {
         return freightModelDao.addFreightModel(id,vo);
     }
 
-    /*
+
+
+    /**
      * @Description: 管理员克隆店铺的运费模板
      * @Param:  [shopId, id]
      * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
      * @Author: lzn
      * @Date 2020/12/10
-     **/
+     */
     @Transactional
     public ReturnObject cloneFreightModel(@PathVariable Long shopId, @PathVariable Long id)
     {
         return freightModelDao.cloneFreightModel(shopId, id);
+    }
+
+
+    /**
+     * @Description: 管理员定义件数模板明细
+     * @Param:  [shopId, id, pieceFreightModelInfoVo]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     */
+    @Transactional
+    public ReturnObject setPieceItems(Long shopId, Long id, PieceFreightModelInfoVo pieceFreightModelInfoVo)
+    {
+        ReturnObject returnObject = freightModelDao.examIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return pieceFreightDao.setPieceItems(id, pieceFreightModelInfoVo);
+        }
+        else
+        {
+            return returnObject;
+        }
+    }
+
+
+    /**
+     * @Description: 店家或管理员查询件数运费模板明细
+     * @Param:  [shopId, id]
+     * @return: {@link ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     */
+    @Transactional
+    public ReturnObject getPieceItems(Long shopId, Long id)
+    {
+        ReturnObject returnObject = freightModelDao.examIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return pieceFreightDao.getPieceItems(id);
+        }
+        else
+        {
+            return returnObject;
+        }
+    }
+
+    /**
+     * @Description: 店家或管理员修改件数运费模板明细
+     * @Param:  [shopId, id, pieceFreightModelInfoVo]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     */
+    @Transactional
+    public ReturnObject putPieceItems(Long shopId, Long id, PieceFreightModelInfoVo pieceFreightModelInfoVo)
+    {
+        ReturnObject returnObject = freightModelDao.examFreightModelIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return pieceFreightDao.putPieceItems(id, pieceFreightModelInfoVo);
+        }
+        else
+        {
+            return returnObject;
+        }
+    }
+
+
+    /**
+     * @Description: 店家或管理员删掉件数运费模板明细
+     * @Param:  [shopId, id]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     */
+    @Transactional
+    public ReturnObject delPieceItems(Long shopId, Long id)
+    {
+        ReturnObject returnObject = freightModelDao.examFreightModelIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return pieceFreightDao.delPieceItems(id);
+        }
+        else
+        {
+            return returnObject;
+        }
+    }
+
+
+    /**
+     * @Description: 店家或管理员修改件数模板明细
+     * @Param:  [shopId, id, weightFreightModelInfoVo]
+     * @return: {@link ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     */
+    @Transactional
+    public ReturnObject putWeightItems(Long shopId, Long id, WeightFreightModelInfoVo weightFreightModelInfoVo)
+    {
+        ReturnObject returnObject = freightModelDao.examFreightModelIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return weightFreightDao.putWeightItems(id, weightFreightModelInfoVo);
+        }
+        else
+        {
+            return returnObject;
+        }
+    }
+
+
+    /**
+     * @Description: 店家或管理员删掉重量运费模板明细
+     * @Param:  [shopId, id]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     */
+    @Transactional
+    public ReturnObject delWeightItems(Long shopId, Long id)
+    {
+        ReturnObject returnObject = freightModelDao.examFreightModelIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return weightFreightDao.delWeightItems(id);
+        }
+        else
+        {
+            return returnObject;
+        }
     }
 
     public ReturnObject<PageInfo<VoObject>> getGoodsFreightModel(Long id,String name,int page,int pageSize)
@@ -103,7 +237,7 @@ public class FreightService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ReturnObject addWeightItem(Long shopId, Long id, WeightModelInfoVo vo)
+    public ReturnObject addWeightItem(Long shopId, Long id, WeightFreightModelInfoVo vo)
     {
         return weightFreightDao.insertWeightItems(shopId,id,vo);
     }
@@ -113,21 +247,37 @@ public class FreightService {
         return weightFreightDao.getWeightItem(shopId,id);
     }
 
-    public ReturnObject getFreight(List<FreightModelBo> freightModelBoList,List<Integer> skuWeight,List<ItemVo> items,int rid)
+    public ReturnObject getFreight(List<FreightModelBo> freightModelBoList, List<Integer> skuWeight, List<ItemVo> items, Long rid)
     {
 
         int len = skuWeight.size();
+        Boolean existDefaultModel=false;
+        FreightModelBo freightModelBo = freightModelDao.getDefaultFreightModel();
+        Long defaultModelId = freightModelBo.getId();
+        Long particularSum = 0L;
+        Long defaultSum = 0L;
         for(int i=0;i<len;i++)
         {
-            if(freightModelBoList.get(i)==null)
+            if(freightModelBoList.get(i)==null||freightModelBoList.get(i).getId().equals(defaultModelId))
             {
-                freightModelBoList.set(i,freightModelDao.getDefaultFreightModel());
+                freightModelBoList.set(i,freightModelBo);
+                existDefaultModel = true;
             }
-            if(freightModelBoList.get(i).getType()==0)
+            int type = freightModelBoList.get(i).getType();
+            Long freightModelId = freightModelBoList.get(i).getId();
+            freightModelBoList.get(i).setFreightModelDetail(freightModelDao.getFreightOrderDetail(rid,type,freightModelId));
+            particularSum+=freightModelBoList.get(i).computeFreight(skuWeight.get(i),items.get(i).getCount());
+        }
+        if(existDefaultModel)
+        {
+            for(int i=0;i<len;i++)
             {
-
+                defaultSum += freightModelBo.computeFreight(skuWeight.get(i),items.get(i).getCount());
             }
         }
+        Long retSum = particularSum>defaultSum?particularSum:defaultSum;
+        return new ReturnObject(retSum);
+
     }
 
 

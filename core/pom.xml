@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    
     <groupId>com.example</groupId>
     <artifactId>core</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -95,6 +95,11 @@
             <groupId>com.github.lookfirst</groupId>
             <artifactId>sardine</artifactId>
             <version>5.10</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
