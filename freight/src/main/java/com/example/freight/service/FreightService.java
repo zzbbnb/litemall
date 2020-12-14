@@ -1,5 +1,10 @@
 package com.example.freight.service;
 
+import cn.edu.xmu.ooad.util.ResponseCode;
+import cn.edu.xmu.ooad.util.ReturnObject;
+import com.example.freight.dao.FreightModelDao;
+import com.example.freight.dao.PieceFreightModelDao;
+import com.example.freight.model.vo.PieceFreightModelVo;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.freight.dao.FreightModelDao;
@@ -31,6 +36,9 @@ public class FreightService {
     FreightModelDao freightModelDao;
 
     @Autowired
+
+    PieceFreightModelDao pieceFreightModelDao;
+
     WeightFreightDao weightFreightDao;
 
     /** 
@@ -70,6 +78,7 @@ public class FreightService {
         return freightModelDao.addFreightModel(id,vo);
     }
   
+  
     /*
      * @Description: 管理员克隆店铺的运费模板
      * @Param:  [shopId, id]
@@ -83,6 +92,92 @@ public class FreightService {
         return freightModelDao.cloneFreightModel(shopId, id);
     }
 
+  
+    /*
+     * @Description: 管理员定义件数模板明细
+     * @Param:  [shopId, id, pieceFreightModelVo]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     **/
+    @Transactional
+    public ReturnObject setPieceItems(Long shopId, Long id, PieceFreightModelVo pieceFreightModelVo)
+    {
+        ReturnObject returnObject = freightModelDao.examIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return pieceFreightModelDao.setPieceItems(id, pieceFreightModelVo);
+        }
+        else
+        {
+            return returnObject;
+        }
+    }
+
+
+    /*
+     * @Description: 店家或管理员查询件数运费模板明细
+     * @Param:  [shopId, id]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     **/
+    @Transactional
+    public ReturnObject getPieceItems(Long shopId, Long id)
+    {
+        ReturnObject returnObject = freightModelDao.examIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return pieceFreightModelDao.getPieceItems(id);
+        }
+        else
+        {
+            return returnObject;
+        }
+    }
+
+    /*
+     * @Description: 店家或管理员修改件数运费模板明细
+     * @Param:  [shopId, id, pieceFreightModelVo]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     **/
+    @Transactional
+    public ReturnObject putPieceItems(Long shopId, Long id, PieceFreightModelVo pieceFreightModelVo)
+    {
+        ReturnObject returnObject = freightModelDao.examFreightModelIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return pieceFreightModelDao.putPieceItems(id, pieceFreightModelVo);
+        }
+        else
+        {
+            return returnObject;
+        }
+    }
+
+
+    /*
+     * @Description: 店家或管理员删掉件数运费模板明细
+     * @Param:  [shopId, id]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     **/
+    @Transactional
+    public ReturnObject delPieceItems(Long shopId, Long id)
+    {
+        ReturnObject returnObject = freightModelDao.examFreightModelIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return pieceFreightModelDao.delPieceItems(id);
+        }
+        else
+        {
+            return returnObject;
+        }
+    }
     public ReturnObject<PageInfo<VoObject>> getGoodsFreightModel(Long id,String name,int page,int pageSize)
     {
          ReturnObject<PageInfo<VoObject>> ret =freightModelDao.getGoodsFreightModel(id,name,page,pageSize);
@@ -110,6 +205,4 @@ public class FreightService {
     {
         return weightFreightDao.getWeightItem(shopId,id);
     }
-
-
 }

@@ -1,6 +1,7 @@
 package com.example.freight.model.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class PieceFreightModelPo {
     private Long firstItemsPrice;
     private int additionalItems;
     private Long additionalItemsPrice;
+    @TableField("region_id")
     private Long regionId;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;

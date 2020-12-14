@@ -37,6 +37,4 @@ public class FreightModelRetVo {
         gmtCreate  = freightModelBo.getGmtCreate();
         gmtModified = freightModelBo.getGmtModified();
     }
-
-
 }
