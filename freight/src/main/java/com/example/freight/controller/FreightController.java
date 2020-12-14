@@ -1,24 +1,32 @@
 package com.example.freight.controller;
 
 import cn.edu.xmu.ooad.annotation.Audit;
+import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
+import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.freight.model.vo.PieceFreightModelInfoVo;
+import com.example.freight.model.bo.FreightModelBo;
 import com.example.freight.model.vo.FreightModelInfoVo;
+import com.example.freight.model.vo.ItemVo;
 import com.example.freight.model.vo.WeightFreightModelInfoVo;
 import com.example.freight.service.FreightService;
+import com.example.freight.service.IFreightModelService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @program: core
@@ -28,8 +36,7 @@ import javax.servlet.http.HttpServletResponse;
  **/
 @RestController
 @RequestMapping(value = "/freight", produces = "application/json;charset=UTF-8")
-public class FreightController
-{
+public class FreightController {
 
     private static final Logger logger = LoggerFactory.getLogger(FreightController.class);
 
@@ -37,7 +44,11 @@ public class FreightController
     @Autowired
     FreightService freightService;
 
+    @Autowired
+    IFreightModelService iFreightModelService;
+
     //此处需要有一个删除商品关联的运费模板信息的dubbo服务
+
 
     /**
     * @Description: 管理员设置默认运费模板
@@ -64,9 +75,7 @@ public class FreightController
         ReturnObject returnObject = freightService.setDefaultFreightModel(shopId, id);
         if (returnObject.getCode() == ResponseCode.OK) {
             return Common.getRetObject(returnObject);
-        }
-        else
-        {
+        } else {
             return Common.decorateReturnObject(returnObject);
         }
 
@@ -210,21 +219,21 @@ public class FreightController
         }
     }
 
-    /**
+    /*
      * @Description: 管理员克隆店铺的运费模板
      * @Param:  [shopId, id]
      * @return: {@link java.lang.Object}
      * @Author: lzn
      * @Date 2020/12/10
-     */
+     **/
     @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/clone")
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
-            @ApiImplicitParam(name = "shopId", value = "商户ID", required = true, dataType = "Integer", paramType = "path"),
-            @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Integer", paramType = "path")
+            @ApiImplicitParam(paramType = "header",dataType = "String",name = "authorization",value = "Token",required = true),
+            @ApiImplicitParam(name = "shopId",value ="商户ID",required = true,dataType = "Integer",paramType = "path"),
+            @ApiImplicitParam(name = "id",value ="id",required = true,dataType = "Integer",paramType = "path")
     })
     @ApiResponses({
-            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 0,message = "成功"),
             @ApiResponse(code = 504, message = "操作id不存在")
     })
 
@@ -233,7 +242,7 @@ public class FreightController
     @ResponseBody
     public Object cloneFreightModel(@PathVariable Long shopId, @PathVariable Long id)
     {
-        logger.debug("cloneFreightModel shopId:" + shopId + " id = " + id);
+        logger.debug("cloneFreightModel shopId:"+shopId+" id = "+id);
         ReturnObject returnObject = freightService.cloneFreightModel(shopId, id);
         if (returnObject.getCode() == ResponseCode.OK)
         {
@@ -243,6 +252,21 @@ public class FreightController
         {
             return Common.decorateReturnObject(returnObject);
         }
+    }
+
+    @Audit
+    @PostMapping("region/{rid}/price")
+    public Object getFreight(@PathVariable Long rid, @RequestBody List<ItemVo> items)
+    {
+        logger.debug("compute freight: region id: " +rid + " items = " + items);
+        List<FreightModelBo> freightModelBoList = new ArrayList<>();
+        List<Integer> skuWeight = new ArrayList<>();
+        for(ItemVo itemVo:items)
+        {
+            freightModelBoList.add(iFreightModelService.getFreightIdBySkuId(itemVo.getSkuId()));
+            skuWeight.add(iFreightModelService.getWeightBySkuId(itemVo.getSkuId()));
+        }
+        return Common.getRetObject(freightService.getFreight(freightModelBoList,skuWeight,items,rid));
     }
 
 
