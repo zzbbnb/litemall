@@ -3,10 +3,12 @@ package com.example.freight.service;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.freight.dao.FreightModelDao;
+import com.example.freight.dao.WeightFreightDao;
 import com.example.freight.mapper.FreightModelMapper;
 import com.example.freight.model.bo.FreightModelBo;
 import com.example.freight.model.po.FreightModelPo;
 import com.example.freight.model.vo.FreightModelInfoVo;
+import com.example.freight.model.vo.WeightModelInfoVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.mysql.cj.jdbc.jmx.LoadBalanceConnectionGroupManager;
@@ -26,6 +28,9 @@ import javax.naming.Name;
 public class FreightService {
     @Autowired
     FreightModelDao freightModelDao;
+
+    @Autowired
+    WeightFreightDao weightFreightDao;
 
     /** 
     * @Description: 设置默认运费模板 
@@ -76,6 +81,16 @@ public class FreightService {
     public ReturnObject deleteFreightModel(Long shopId,Long id)
     {
         return freightModelDao.deleteFreightModel(shopId,id);
+    }
+
+    public ReturnObject addWeightItem(Long shopId, Long id, WeightModelInfoVo vo)
+    {
+        return weightFreightDao.insertWeightItems(shopId,id,vo);
+    }
+
+    public ReturnObject getWeightItem(Long shopId,Long id)
+    {
+        return weightFreightDao.getWeightItem(shopId,id);
     }
 
 

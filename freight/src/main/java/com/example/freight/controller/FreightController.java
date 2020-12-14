@@ -8,6 +8,7 @@ import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ResponseUtil;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.freight.model.vo.FreightModelInfoVo;
+import com.example.freight.model.vo.WeightModelInfoVo;
 import com.example.freight.service.FreightService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
@@ -15,7 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @program: core
@@ -28,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 public class FreightController {
 
     private static final Logger logger = LoggerFactory.getLogger(FreightController.class);
+
 
     @Autowired
     FreightService freightService;
@@ -152,6 +157,13 @@ public class FreightController {
         }
     }
 
+    /** 删除运费模板
+    * @Description:
+    * @Param: [shopId, id]
+    * @return: java.lang.Object
+    * @Author: alex101
+    * @Date: 2020/12/14
+    */
     @Audit
     @DeleteMapping("/shops/{shopId}/freightmodels/{id}")
     public Object deleteFreightModel(@PathVariable Long shopId,@PathVariable Long id)
@@ -159,6 +171,41 @@ public class FreightController {
         ReturnObject returnObject = freightService.deleteFreightModel(shopId,id);
         if (returnObject.getCode() == ResponseCode.OK) {
             return Common.getRetObject(returnObject);
+        } else {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+    /**
+    * @Description:  新增重量明细
+    * @Param: [shopId, id, vo, result, httpServletResponse]
+    * @return: java.lang.Object
+    * @Author: alex101
+    * @Date: 2020/12/14
+    */
+    @Audit
+    @PostMapping("/shops/{shopId}/freightmodels/{id}/weightItems")
+    public Object addWeightItems(@PathVariable Long shopId, @PathVariable Long id, @RequestBody WeightModelInfoVo vo, BindingResult result, HttpServletResponse httpServletResponse)
+    {
+        Object o = Common.processFieldErrors(result, httpServletResponse);
+        if(o != null){
+            return o;
+        }
+        ReturnObject returnObject = freightService.addWeightItem(shopId,id,vo);
+        if (returnObject.getCode() == ResponseCode.OK) {
+            return Common.getRetObject(returnObject);
+        } else {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+    @Audit
+    @GetMapping("/shops/{shopId}/freightmodels/{id}/weightItems")
+    public Object getWeightItems(@PathVariable Long shopId,@PathVariable Long id)
+    {
+        ReturnObject returnObject  = freightService.getWeightItem(shopId,id);
+        if (returnObject.getCode() == ResponseCode.OK) {
+            return Common.getListRetObject(returnObject);
         } else {
             return Common.decorateReturnObject(returnObject);
         }

@@ -35,8 +35,8 @@ import java.util.List;
 @Component
 public class FreightModelDao {
 
-    private static final int weightType = 0;
-    private static final int peiceType = 1;
+    private static final int WEIGHT_TPYE = 0;
+    private static final int PEICE_TPYE = 1;
     private static final Logger logger = LoggerFactory.getLogger(FreightController.class);
 
     @Autowired
@@ -63,7 +63,7 @@ public class FreightModelDao {
         }else if(!freightModelPo.getShopId().equals(shopId)) {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
             logger.error("freightModel shop Id:"+freightModelPo.getShopId()+" not equal to path shop Id:"+shopId);
-        }else if(freightModelPo.getType()==peiceType) {
+        }else if(freightModelPo.getType()==PEICE_TPYE) {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
             logger.error("can't set piece type model to default "+freightModelPo.getId());
         } else{
