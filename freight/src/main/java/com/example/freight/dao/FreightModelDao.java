@@ -1,5 +1,6 @@
 package com.example.freight.dao;
 
+import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -10,6 +11,8 @@ import com.example.freight.mapper.FreightModelMapper;
 import com.example.freight.model.bo.FreightModelBo;
 import com.example.freight.model.po.FreightModelPo;
 import com.example.freight.model.vo.FreightModelInfoVo;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.xml.crypto.Data;
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -112,6 +116,7 @@ public class FreightModelDao {
     * @Author: alex101
     * @Date: 2020/12/11
     */
+    @Transactional
     public ReturnObject addFreightModel(Long id, FreightModelInfoVo vo)
     {
         ReturnObject returnObject;
@@ -136,6 +141,77 @@ public class FreightModelDao {
         return returnObject;
     }
 
+    /*
+    /**
+    * @Description: 分页查询商店中的所有运费模板
+    * @Param: [id, name, page, pageSize]
+    * @return: cn.edu.xmu.ooad.util.ReturnObject<com.github.pagehelper.PageInfo<cn.edu.xmu.ooad.model.VoObject>>
+    * @Author: alex101
+    * @Date: 2020/12/14
+    */
+    public ReturnObject<PageInfo<VoObject>> getGoodsFreightModel(Long id,String name,int page,int pageSize)
+    {
+        List<FreightModelPo> freightModelPos;
+        QueryWrapper<FreightModelPo>  queryWrapper = new QueryWrapper<FreightModelPo>().eq("id",id);
+        if(name!=null) {
+            queryWrapper = queryWrapper.eq("name",name);
+        }
+        PageHelper.startPage(page,pageSize);
+        freightModelPos = freightModelMapper.selectList(queryWrapper);
 
+        List<VoObject> ret = new ArrayList<>(freightModelPos.size());
+        for(FreightModelPo po:freightModelPos)
+        {
+            ret.add(new FreightModelBo(po));
+        }
+
+        PageInfo<FreightModelPo> freightModelPoPageInfo = PageInfo.of(freightModelPos);
+        PageInfo<VoObject> voObjectPageInfo = new PageInfo<>(ret);
+
+        voObjectPageInfo.setPages(freightModelPoPageInfo.getPages());
+        voObjectPageInfo.setPageNum(freightModelPoPageInfo.getPageNum());
+        voObjectPageInfo.setPageSize(freightModelPoPageInfo.getPageSize());
+        voObjectPageInfo.setTotal(freightModelPoPageInfo.getTotal());
+        return new ReturnObject<>(voObjectPageInfo);
+    }
+
+    @Transactional
+    public ReturnObject modifyFreightModel(Long shopId,Long id,FreightModelInfoVo freightModelInfoVo)
+    {
+        ReturnObject returnObject;
+        FreightModelPo freightModelPo = freightModelMapper.selectById(id);
+        if(freightModelPo==null) {
+            logger.error("not found freightModel shopid = " + shopId + " id = " + id);
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }else if(!freightModelPo.getShopId().equals(shopId)){
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            logger.error("freightModel shop Id:" + freightModelPo.getShopId() + " not equal to path shop Id:" + shopId);
+        }else {
+            freightModelPo.setGmtModified(LocalDateTime.now());
+            freightModelPo.setUnit(freightModelInfoVo.getUnit());
+            freightModelMapper.updateById(freightModelPo);
+            returnObject = new ReturnObject<>(ResponseCode.OK);
+        }
+        return returnObject;
+    }
+
+    public ReturnObject deleteFreightModel(Long shopId,Long id)
+    {
+        ReturnObject returnObject;
+        FreightModelPo freightModelPo = freightModelMapper.selectById(id);
+        if(freightModelPo==null)
+        {
+            logger.error("not found freightModel shopid = " + shopId + " id = " + id);
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }else if(!freightModelPo.getShopId().equals(shopId)){
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            logger.error("freightModel shop Id:" + freightModelPo.getShopId() + " not equal to path shop Id:" + shopId);
+        }else {
+            freightModelMapper.deleteById(id);
+            returnObject = new ReturnObject<>(ResponseCode.OK);
+        }
+        return returnObject;
+
+    }
 
 }

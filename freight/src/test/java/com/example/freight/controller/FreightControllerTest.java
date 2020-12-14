@@ -133,4 +133,14 @@ public class FreightControllerTest {
                 "}";
         JSONAssert.assertEquals(expectedResponse, responseString, true);
     }
+
+    @Test
+    public void addFreightModel() throws Exception
+    {
+        String token = new JwtHelper().createToken(100L, 100l,100);
+        String responseString = this.mvc.perform(get("freight/shops/100/freightmodels").header("authorization", token))
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+    }
 }
