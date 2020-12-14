@@ -54,7 +54,7 @@ public class PieceFreightModelBo implements VoObject, FreightModelDetail
     }
 
     @Override
-    public Long getFreight(OrderItemComputeVo vo)
+    public Long getFreight(int weight,Long count)
     {
         return null;
     }

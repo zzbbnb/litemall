@@ -21,5 +21,5 @@ public interface FreightModelDetail {
     * @Author: alex101
     * @Date: 2020/12/14
     */
-    Long getFreight(OrderItemComputeVo vo);
+    Long getFreight(int weight, Long count);
 }

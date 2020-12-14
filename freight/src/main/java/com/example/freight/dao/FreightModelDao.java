@@ -3,13 +3,19 @@ package com.example.freight.dao;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.freight.controller.FreightController;
 import com.example.freight.mapper.FreightModelMapper;
+import com.example.freight.mapper.PieceFreightModelMapper;
+import com.example.freight.mapper.WeightFreightModelMapper;
 import com.example.freight.model.bo.FreightModelBo;
+import com.example.freight.model.bo.FreightModelDetail;
+import com.example.freight.model.bo.WeightFreightModelBo;
 import com.example.freight.model.bo.PieceFreightModelBo;
 import com.example.freight.model.po.FreightModelPo;
+import com.example.freight.model.po.WeightFreightModelPo;
 import com.example.freight.model.po.PieceFreightModelPo;
 import com.example.freight.model.vo.FreightModelInfoVo;
 import com.github.pagehelper.PageHelper;
@@ -44,15 +50,20 @@ public class FreightModelDao {
     @Autowired
     private FreightModelMapper freightModelMapper;
 
-    /** 
-    * @Description: 设置默认运费模板 
-    * @Param: [shopid, id] 
-    * @return: cn.edu.xmu.ooad.util.ReturnObject 
-    * @Author: alex101
-    * @Date: 2020/12/9 
-    */
-    public ReturnObject setDefaultFreightModel(Long shopId,Long id)
-    {
+    @Autowired
+    private WeightFreightModelMapper weightFreightModelMapper;
+
+    @Autowired
+    private PieceFreightModelMapper pieceFreightModelMapper;
+
+    /**
+     * @Description: 设置默认运费模板
+     * @Param: [shopid, id]
+     * @return: cn.edu.xmu.ooad.util.ReturnObject
+     * @Author: alex101
+     * @Date: 2020/12/9
+     */
+    public ReturnObject setDefaultFreightModel(Long shopId, Long id) {
 
         ReturnObject returnObject;
         FreightModelPo freightModelPo = freightModelMapper.selectById(id);
@@ -110,6 +121,7 @@ public class FreightModelDao {
         }
         return returnObject;
     }
+
     /**
     * @Description: 增加运费模板
     * @Param:
@@ -175,8 +187,14 @@ public class FreightModelDao {
         return new ReturnObject<>(voObjectPageInfo);
     }
 
-    public ReturnObject modifyFreightModel(Long shopId,Long id,FreightModelInfoVo freightModelInfoVo)
-    {
+    /**
+     * @Description: 修改运费模板
+     * @Param: [shopId, id, freightModelInfoVo]
+     * @return: cn.edu.xmu.ooad.util.ReturnObject
+     * @Author: alex101
+     * @Date: 2020/12/14
+     */
+    public ReturnObject modifyFreightModel(Long shopId, Long id, FreightModelInfoVo freightModelInfoVo) {
         ReturnObject returnObject;
         FreightModelPo freightModelPo = freightModelMapper.selectById(id);
         if(freightModelPo==null) {
@@ -194,8 +212,14 @@ public class FreightModelDao {
         return returnObject;
     }
 
-    public ReturnObject deleteFreightModel(Long shopId,Long id)
-    {
+    /**
+     * @Description: 删除运费模板
+     * @Param: [shopId, id]
+     * @return: cn.edu.xmu.ooad.util.ReturnObject
+     * @Author: alex101
+     * @Date: 2020/12/14
+     */
+    public ReturnObject deleteFreightModel(Long shopId, Long id) {
         ReturnObject returnObject;
         FreightModelPo freightModelPo = freightModelMapper.selectById(id);
         if(freightModelPo==null)
@@ -233,7 +257,7 @@ public class FreightModelDao {
         else if (!freightModelPo.getShopId().equals(shopId))
         {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
-            logger.error("freightModel shop Id:" + freightModelPo.getShopId() + " not equal to path shop Id:" + shopId);
+            logger.error("not found freightModel shopId = " + shopId + " id = " + id);
         }
         else
         {
@@ -246,6 +270,29 @@ public class FreightModelDao {
             logger.info("found freightModel to be cloned");
         }
         return returnObject;
+    }
+
+    public FreightModelBo getDefaultFreightModel()
+    {
+        QueryWrapper<FreightModelPo> freightModelPoQueryWrapper = new QueryWrapper<FreightModelPo>().eq("defaultModel",true);
+        return new FreightModelBo(freightModelMapper.selectOne(freightModelPoQueryWrapper));
+    }
+
+    public FreightModelDetail getFreightOrderDetail(Long rid,int type,Long freightModelId)
+    {
+        FreightModelDetail freightModelDetail = null;
+        if(type==0)
+        {
+            QueryWrapper queryWrapper = new QueryWrapper<WeightFreightModelPo>().eq("regionId",rid).eq("freightModelId",freightModelId);
+            WeightFreightModelBo weightFreightModelBo = new WeightFreightModelBo(weightFreightModelMapper.selectOne(queryWrapper)) ;
+            freightModelDetail =  weightFreightModelBo;
+        }else if(type==1)
+        {
+            QueryWrapper queryWrapper = new QueryWrapper<PieceFreightModelPo>().eq("regionId",rid).eq("freightModelId",freightModelId);
+            PieceFreightModelBo pieceFreightModelBo = new PieceFreightModelBo(pieceFreightModelMapper.selectOne(queryWrapper)) ;
+            freightModelDetail =  pieceFreightModelBo;
+        }
+        return freightModelDetail;
     }
 
 

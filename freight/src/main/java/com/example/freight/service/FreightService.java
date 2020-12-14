@@ -4,16 +4,20 @@ import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.freight.dao.FreightModelDao;
 import com.example.freight.dao.PieceFreightDao;
-import com.example.freight.model.vo.PieceFreightModelInfoVo;
+import com.example.freight.model.bo.FreightModelBo;
+import com.example.freight.model.vo.*;
 import cn.edu.xmu.ooad.model.VoObject;
 import com.example.freight.dao.WeightFreightDao;
-import com.example.freight.model.vo.FreightModelInfoVo;
-import com.example.freight.model.vo.WeightFreightModelInfoVo;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.mysql.cj.jdbc.jmx.LoadBalanceConnectionGroupManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import javax.naming.Name;
+import java.util.List;
 
 /**
  * @program: core
@@ -55,7 +59,7 @@ public class FreightService {
     {
         return freightModelDao.getFreightModelSummary(shopId,id);
     }
-  
+
     /**
     * @Description: 增加运费模板
     * @Param: [id, vo]
@@ -68,8 +72,9 @@ public class FreightService {
     {
         return freightModelDao.addFreightModel(id,vo);
     }
-  
-  
+
+
+
     /**
      * @Description: 管理员克隆店铺的运费模板
      * @Param:  [shopId, id]
@@ -83,7 +88,7 @@ public class FreightService {
         return freightModelDao.cloneFreightModel(shopId, id);
     }
 
-  
+
     /**
      * @Description: 管理员定义件数模板明细
      * @Param:  [shopId, id, pieceFreightModelInfoVo]
@@ -241,4 +246,39 @@ public class FreightService {
     {
         return weightFreightDao.getWeightItem(shopId,id);
     }
+
+    public ReturnObject getFreight(List<FreightModelBo> freightModelBoList, List<Integer> skuWeight, List<ItemVo> items, Long rid)
+    {
+
+        int len = skuWeight.size();
+        Boolean existDefaultModel=false;
+        FreightModelBo freightModelBo = freightModelDao.getDefaultFreightModel();
+        Long defaultModelId = freightModelBo.getId();
+        Long particularSum = 0L;
+        Long defaultSum = 0L;
+        for(int i=0;i<len;i++)
+        {
+            if(freightModelBoList.get(i)==null||freightModelBoList.get(i).getId().equals(defaultModelId))
+            {
+                freightModelBoList.set(i,freightModelBo);
+                existDefaultModel = true;
+            }
+            int type = freightModelBoList.get(i).getType();
+            Long freightModelId = freightModelBoList.get(i).getId();
+            freightModelBoList.get(i).setFreightModelDetail(freightModelDao.getFreightOrderDetail(rid,type,freightModelId));
+            particularSum+=freightModelBoList.get(i).computeFreight(skuWeight.get(i),items.get(i).getCount());
+        }
+        if(existDefaultModel)
+        {
+            for(int i=0;i<len;i++)
+            {
+                defaultSum += freightModelBo.computeFreight(skuWeight.get(i),items.get(i).getCount());
+            }
+        }
+        Long retSum = particularSum>defaultSum?particularSum:defaultSum;
+        return new ReturnObject(retSum);
+
+    }
+
+
 }
