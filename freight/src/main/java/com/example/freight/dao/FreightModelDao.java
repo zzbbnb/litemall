@@ -25,6 +25,7 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @program: core
@@ -211,4 +212,38 @@ public class FreightModelDao {
 
     }
 
+
+    /*
+     * @Description:管理员克隆店铺的运费模板
+     * @Param:  [shopId, id]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/10
+     **/
+    public ReturnObject cloneFreightModel(Long shopId, Long id)
+    {
+        ReturnObject returnObject;
+        FreightModelPo freightModelPo = freightModelMapper.selectById(id);
+        if (freightModelPo == null)
+        {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            logger.error("not found freightModel shopId = " + shopId + " id = " + id);
+        }
+        else if (!freightModelPo.getShopId().equals(shopId))
+        {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            logger.error("not found freightModel shopId = " + shopId + " id = " + id);
+        }
+        else
+        {
+            FreightModelPo freightModelPo2 = freightModelPo.objectClone();
+            freightModelPo2.setGmtCreate(LocalDateTime.now());
+            freightModelPo2.setName(freightModelPo.getName() + UUID.randomUUID());
+            freightModelMapper.insert(freightModelPo2);
+            FreightModelBo freightModelBo = new FreightModelBo(freightModelPo2);
+            returnObject = new ReturnObject<>(freightModelBo);
+            logger.info("found freightModel to be cloned");
+        }
+        return returnObject;
+    }
 }

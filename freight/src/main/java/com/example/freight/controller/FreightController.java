@@ -211,5 +211,40 @@ public class FreightController {
         }
     }
 
+    /*
+     * @Description: 管理员克隆店铺的运费模板
+     * @Param:  [shopId, id]
+     * @return: {@link java.lang.Object}
+     * @Author: lzn
+     * @Date 2020/12/10
+     **/
+    @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/clone")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header",dataType = "String",name = "authorization",value = "Token",required = true),
+            @ApiImplicitParam(name = "shopId",value ="商户ID",required = true,dataType = "Integer",paramType = "path"),
+            @ApiImplicitParam(name = "id",value ="id",required = true,dataType = "Integer",paramType = "path")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0,message = "成功"),
+            @ApiResponse(code = 504, message = "操作id不存在")
+    })
+
+    @Audit
+    @PostMapping("shops/{shopId}/freightmodels/{id}/clone")
+    @ResponseBody
+    public Object cloneFreightModel(@PathVariable Long shopId, @PathVariable Long id)
+    {
+        logger.debug("cloneFreightModel shopId:"+shopId+" id = "+id);
+        ReturnObject returnObject = freightService.cloneFreightModel(shopId, id);
+        if (returnObject.getCode() == ResponseCode.OK)
+        {
+            return Common.getRetObject(returnObject);
+        }
+        else
+        {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
 
 }

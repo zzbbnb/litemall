@@ -69,6 +69,18 @@ public class FreightService {
     {
         return freightModelDao.addFreightModel(id,vo);
     }
+    /*
+     * @Description: 管理员克隆店铺的运费模板
+     * @Param:  [shopId, id]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/10
+     **/
+    @Transactional
+    public ReturnObject cloneFreightModel(@PathVariable Long shopId, @PathVariable Long id)
+    {
+        return freightModelDao.cloneFreightModel(shopId, id);
+    }
 
     public ReturnObject<PageInfo<VoObject>> getGoodsFreightModel(Long id,String name,int page,int pageSize)
     {
