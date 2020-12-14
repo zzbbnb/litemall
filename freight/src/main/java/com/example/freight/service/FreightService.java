@@ -49,6 +49,7 @@ public class FreightService {
         return freightModelDao.getFreightModelSummary(shopId,id);
     }
 
+  
     /*
      * @Description: 管理员克隆店铺的运费模板
      * @Param:  [shopId, id]

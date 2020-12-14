@@ -106,6 +106,38 @@ public class FreightModelDao {
         }
         return returnObject;
     }
+    /**
+    * @Description: 增加运费模板
+    * @Param:
+    * @return:
+    * @Author: alex101
+    * @Date: 2020/12/11
+    */
+    public ReturnObject addFreightModel(Long id, FreightModelInfoVo vo)
+    {
+        ReturnObject returnObject;
+        FreightModelBo freightModelBo = new FreightModelBo();
+        freightModelBo.setShopId(id);
+        freightModelBo.setType(vo.getType());
+        freightModelBo.setUnit(vo.getUnit());
+        freightModelBo.setName(vo.getName());
+        FreightModelPo freightModelPo = (FreightModelPo) freightModelBo.createPo();
+        QueryWrapper<FreightModelPo> queryWrapper = new QueryWrapper<FreightModelPo>();
+        queryWrapper.eq("name",freightModelPo.getName());
+        int count = freightModelMapper.selectCount(queryWrapper);
+        if(count>0){
+            returnObject = new ReturnObject(ResponseCode.FREIGHTNAME_SAME);
+        }else {
+            freightModelMapper.insert(freightModelPo);
+
+            FreightModelPo freightModelPo1= freightModelMapper.selectOne(queryWrapper);
+            FreightModelBo freightModelBo1 = new FreightModelBo(freightModelPo1);
+            returnObject = new ReturnObject<>(freightModelBo1);
+        }
+        return returnObject;
+    }
+
+
 
 
     /*

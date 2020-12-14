@@ -105,6 +105,28 @@ public class FreightController
         }
     }
 
+    /*
+    /** 
+    * @Description: 增加运费模板 
+    * @Param: [id, vo] 
+    * @return: java.lang.Object 
+    * @Author: alex101
+    * @Date: 2020/12/11 
+    */
+    @Audit
+    @PostMapping("/shops/{id}/freightmodels")
+    public Object addFreightModel(@PathVariable Long id, @RequestBody  FreightModelInfoVo vo)
+    {
+        logger.debug("set freight model id: "+id+" feightmodel info "+ vo);
+        ReturnObject returnObject = freightService.addFreightModel(id,vo);
+        if(returnObject.getCode()==ResponseCode.OK)
+        {
+            return Common.getRetObject(returnObject);
+        }else {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
 
     /**
      * @Description: 管理员克隆店铺的运费模板
