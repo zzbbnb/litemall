@@ -1,14 +1,13 @@
 package com.example.freight.controller;
 
 import cn.edu.xmu.ooad.annotation.Audit;
-import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
-import com.example.freight.model.vo.PieceFreightModelVo;
+import com.example.freight.model.vo.PieceFreightModelInfoVo;
 import com.example.freight.model.vo.FreightModelInfoVo;
-import com.example.freight.model.vo.WeightModelInfoVo;
+import com.example.freight.model.vo.WeightFreightModelInfoVo;
 import com.example.freight.service.FreightService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
@@ -16,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -186,7 +184,7 @@ public class FreightController
     */
     @Audit
     @PostMapping("/shops/{shopId}/freightmodels/{id}/weightItems")
-    public Object addWeightItems(@PathVariable Long shopId, @PathVariable Long id, @RequestBody WeightModelInfoVo vo, BindingResult result, HttpServletResponse httpServletResponse)
+    public Object addWeightItems(@PathVariable Long shopId, @PathVariable Long id, @RequestBody WeightFreightModelInfoVo vo, BindingResult result, HttpServletResponse httpServletResponse)
     {
         Object o = Common.processFieldErrors(result, httpServletResponse);
         if(o != null){
@@ -248,19 +246,19 @@ public class FreightController
     }
 
 
-    /*
+    /**
      * @Description: 管理员定义件数模板明细
-     * @Param:  [shopId, id, pieceFreightModelVo]
+     * @Param:  [shopId, id, pieceFreightModelInfoVo]
      * @return: {@link java.lang.Object}
      * @Author: lzn
      * @Date 2020/12/14
-     **/
+     */
     @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/pieceItems")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
             @ApiImplicitParam(name = "shopId", value = "商户ID", required = true, dataType = "Integer", paramType = "path"),
             @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Integer", paramType = "path"),
-            @ApiImplicitParam(name = "freightModelInfo", value = "运费模板资料", required = true, dataType = "PieceFreightModelVo", paramType = "body")
+            @ApiImplicitParam(name = "freightModelInfo", value = "运费模板资料", required = true, dataType = "PieceFreightModelInfoVo", paramType = "body")
     })
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
@@ -270,14 +268,14 @@ public class FreightController
     @Audit
     @PostMapping("shops/{shopId}/freightmodels/{id}/pieceItems")
     @ResponseBody
-    public Object setPieceItems(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody PieceFreightModelVo pieceFreightModelVo, BindingResult result, HttpServletResponse httpServletResponse)
+    public Object setPieceItems(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody PieceFreightModelInfoVo pieceFreightModelInfoVo, BindingResult result, HttpServletResponse httpServletResponse)
     {
         logger.debug("setPieceItems shopId:" + shopId + " id = " + id);
         if (result.hasErrors())
         {
             return Common.processFieldErrors(result, httpServletResponse);
         }
-        ReturnObject returnObject = freightService.setPieceItems(shopId, id, pieceFreightModelVo);
+        ReturnObject returnObject = freightService.setPieceItems(shopId, id, pieceFreightModelInfoVo);
         if (returnObject.getCode() == ResponseCode.OK)
         {
             return Common.getRetObject(returnObject);
@@ -290,13 +288,13 @@ public class FreightController
     }
 
 
-    /*
+    /**
      * @Description: 店家或管理员查询件数运费模板明细
      * @Param:  [shopId, id]
      * @return: {@link java.lang.Object}
      * @Author: lzn
      * @Date 2020/12/14
-     **/
+     */
     @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/pieceItems")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
@@ -326,19 +324,19 @@ public class FreightController
 
 
 
-    /*
+    /**
      * @Description: 店家或管理员修改件数模板明细
-     * @Param:  [shopId, id, pieceFreightModelVo, result]
+     * @Param:  [shopId, id, pieceFreightModelInfoVo, result]
      * @return: {@link java.lang.Object}
      * @Author: lzn
      * @Date 2020/12/14
-     **/
+     */
     @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/pieceItems")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
             @ApiImplicitParam(name = "shopId", value = "商户ID", required = true, dataType = "Integer", paramType = "path"),
             @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Integer", paramType = "path"),
-            @ApiImplicitParam(name = "freightModelInfo", value = "运费模板资料", required = true, dataType = "PieceFreightModelVo", paramType = "body")
+            @ApiImplicitParam(name = "freightModelInfo", value = "运费模板资料", required = true, dataType = "PieceFreightModelInfoVo", paramType = "body")
     })
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
@@ -348,14 +346,14 @@ public class FreightController
     @Audit
     @PutMapping("shops/{shopId}/freightmodels/{id}/pieceItems")
     @ResponseBody
-    public Object putPieceItems(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody PieceFreightModelVo pieceFreightModelVo, BindingResult result, HttpServletResponse httpServletResponse)
+    public Object putPieceItems(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody PieceFreightModelInfoVo pieceFreightModelInfoVo, BindingResult result, HttpServletResponse httpServletResponse)
     {
         logger.debug("putPieceItems shopId:" + shopId + " id = " + id);
         if (result.hasErrors())
         {
             return Common.processFieldErrors(result, httpServletResponse);
         }
-        ReturnObject returnObject = freightService.putPieceItems(shopId, id, pieceFreightModelVo);
+        ReturnObject returnObject = freightService.putPieceItems(shopId, id, pieceFreightModelInfoVo);
         if (returnObject.getCode() == ResponseCode.OK)
         {
             return Common.getRetObject(returnObject);
@@ -368,19 +366,18 @@ public class FreightController
 
 
 
-    /*
+    /**
      * @Description: 店家或管理员删掉件数运费模板明细
      * @Param:  [shopId, id]
      * @return: {@link java.lang.Object}
      * @Author: lzn
      * @Date 2020/12/14
-     **/
+     */
     @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/pieceItems")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
             @ApiImplicitParam(name = "shopId", value = "商户ID", required = true, dataType = "Integer", paramType = "path"),
             @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Integer", paramType = "path"),
-            @ApiImplicitParam(name = "freightModelInfo", value = "运费模板资料", required = true, dataType = "PieceFreightModelVo", paramType = "body")
     })
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功"),
@@ -393,6 +390,82 @@ public class FreightController
     {
         logger.debug("delPieceItems shopId:" + shopId + " id = " + id);
         ReturnObject returnObject = freightService.delPieceItems(shopId, id);
+        if (returnObject.getCode() == ResponseCode.OK)
+        {
+            return Common.getRetObject(returnObject);
+        }
+        else
+        {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+
+    /**
+     * @Description: 店家或管理员修改重量模板明细
+     * @Param:  [shopId, id, weightFreightModelInfoVo, result, httpServletResponse]
+     * @return: {@link Object}
+     * @Author: lzn
+     * @Date 2020/12/14
+     */
+    @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/weightItems")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
+            @ApiImplicitParam(name = "shopId", value = "商户ID", required = true, dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "freightModelInfo", value = "运费模板资料", required = true, dataType = "PieceFreightModelInfoVo", paramType = "body")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 504, message = "操作id不存在"),
+            @ApiResponse(code = 803, message = "运费模板中该地区已经定义")
+    })
+    @Audit
+    @PutMapping("shops/{shopId}/freightmodels/{id}/weightItems")
+    @ResponseBody
+    public Object putWeightItems(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody WeightFreightModelInfoVo weightFreightModelInfoVo, BindingResult result, HttpServletResponse httpServletResponse)
+    {
+        logger.debug("putWeightItems shopId:" + shopId + " id = " + id);
+        if (result.hasErrors())
+        {
+            return Common.processFieldErrors(result, httpServletResponse);
+        }
+        ReturnObject returnObject = freightService.putWeightItems(shopId, id, weightFreightModelInfoVo);
+        if (returnObject.getCode() == ResponseCode.OK)
+        {
+            return Common.getRetObject(returnObject);
+        }
+        else
+        {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+
+    /**
+     * @Description: 店家或管理员删掉重量模板明细
+     * @Param:  [shopId, id, weightFreightModelInfoVo, result, httpServletResponse]
+     * @return: {@link Object}
+     * @Author: lzn
+     * @Date 2020/12/14
+     */
+    @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/weightItems")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
+            @ApiImplicitParam(name = "shopId", value = "商户ID", required = true, dataType = "Integer", paramType = "path"),
+            @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Integer", paramType = "path"),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+            @ApiResponse(code = 504, message = "操作id不存在"),
+    })
+    @Audit
+    @DeleteMapping("shops/{shopId}/freightmodels/{id}/weightItems")
+    @ResponseBody
+    public Object delWeightItems(@PathVariable Long shopId, @PathVariable Long id)
+    {
+        logger.debug("putWeightItems shopId:" + shopId + " id = " + id);
+        ReturnObject returnObject = freightService.delWeightItems(shopId, id);
         if (returnObject.getCode() == ResponseCode.OK)
         {
             return Common.getRetObject(returnObject);

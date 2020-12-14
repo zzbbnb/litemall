@@ -7,12 +7,13 @@ import javax.validation.constraints.NotNull;
 
 /**
  * @program: core
- * @description: WeightModelInfoVo
+ * @description: WeightFreightModelInfoVo
  * @author: alex101
  * @create: 2020-12-14 11:30
  **/
 @Data
-public class WeightModelInfoVo {
+public class WeightFreightModelInfoVo
+{
     @Min(value = 0,message = "首重大于0")
     @NotNull(message = "首重不得为空")
     Long firstWeight;

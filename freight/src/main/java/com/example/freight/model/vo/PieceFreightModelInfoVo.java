@@ -11,13 +11,13 @@ import java.time.LocalDateTime;
 
 /**
  * @program:
- * @despciption: PieceFreightModelVo
+ * @despciption: PieceFreightModelInfoVo
  * @author: lzn
  * @create: 2020/12/14 0:39
  **/
 
 @Data
-public class PieceFreightModelVo
+public class PieceFreightModelInfoVo
 {
     @NotNull
     private Long regionId;
