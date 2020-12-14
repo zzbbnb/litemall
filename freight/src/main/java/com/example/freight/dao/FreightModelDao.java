@@ -2,11 +2,14 @@ package com.example.freight.dao;
 
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.freight.controller.FreightController;
 import com.example.freight.mapper.FreightModelMapper;
 import com.example.freight.model.bo.FreightModelBo;
+import com.example.freight.model.bo.PieceFreightModelBo;
 import com.example.freight.model.po.FreightModelPo;
+import com.example.freight.model.po.PieceFreightModelPo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,7 +127,7 @@ public class FreightModelDao {
         else if (!freightModelPo.getShopId().equals(shopId))
         {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
-            logger.error("not found freightModel shopId = " + shopId + " id = " + id);
+            logger.error("freightModel shop Id:" + freightModelPo.getShopId() + " not equal to path shop Id:" + shopId);
         }
         else
         {
@@ -135,6 +138,59 @@ public class FreightModelDao {
             FreightModelBo freightModelBo = new FreightModelBo(freightModelPo2);
             returnObject = new ReturnObject<>(freightModelBo);
             logger.info("found freightModel to be cloned");
+        }
+        return returnObject;
+    }
+
+
+    /*
+     * @Description: (查看id与shopId是否对应)
+     * @Param:  [shopId, id]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     **/
+    public ReturnObject examIdScope(Long shopId, Long id)
+    {
+        ReturnObject returnObject = new ReturnObject<>(ResponseCode.OK);
+        FreightModelPo freightModelPo = freightModelMapper.selectById(id);
+        if (freightModelPo == null)
+        {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            logger.error("not found freightModel shopId = " + shopId + " id = " + id);
+        }
+        else if (!freightModelPo.getShopId().equals(shopId))
+        {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            logger.error("freightModel shop Id:" + freightModelPo.getShopId() + " not equal to path shop Id:" + shopId);
+        }
+        return returnObject;
+    }
+
+
+
+    /*
+     * @Description: (查看FreightModelId与shopId是否对应)
+     * @Param:  [shopId, id]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     **/
+    public ReturnObject examFreightModelIdScope(Long shopId, Long id)
+    {
+        ReturnObject returnObject = new ReturnObject<>(ResponseCode.OK);
+        QueryWrapper<FreightModelPo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("freightModelId", id);
+        FreightModelPo freightModelPo = freightModelMapper.selectOne(queryWrapper);
+        if (freightModelPo == null)
+        {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            logger.error("not found freightModel shopId = " + shopId + " id = " + id);
+        }
+        else if (!freightModelPo.getShopId().equals(shopId))
+        {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            logger.error("freightModel shop Id:" + freightModelPo.getShopId() + " not equal to path shop Id:" + shopId);
         }
         return returnObject;
     }
