@@ -42,7 +42,6 @@ public class FreightModelDao {
     @Autowired
     private FreightModelMapper freightModelMapper;
 
-    /*
     /** 
     * @Description: 设置默认运费模板 
     * @Param: [shopid, id] 
@@ -50,7 +49,6 @@ public class FreightModelDao {
     * @Author: alex101
     * @Date: 2020/12/9 
     */
-    @Transactional
     public ReturnObject setDefaultFreightModel(Long shopId,Long id)
     {
 
@@ -72,10 +70,12 @@ public class FreightModelDao {
             updateWrapper.eq("default_model",true).set("default_model",false).set("gmt_modified",LocalDateTime.now());
             freightModelMapper.update(null,updateWrapper);
 
-            /**设置新默认模板**/
+            // 设置新默认模板
             freightModelPo.setDefaultModel(true);
 
-            freightModelPo.setGmtModified(LocalDateTime.now());//修改时间
+            //修改时间
+            freightModelPo.setGmtModified(LocalDateTime.now());
+
             freightModelMapper.updateById(freightModelPo);
             returnObject = new ReturnObject<>(ResponseCode.OK);
             logger.info("found freightModel");
@@ -84,7 +84,6 @@ public class FreightModelDao {
     }
 
 
-    /*
     /** 
     * @Description: 返回模板概要 
     * @Param: [shopId, id] 
@@ -116,7 +115,6 @@ public class FreightModelDao {
     * @Author: alex101
     * @Date: 2020/12/11
     */
-    @Transactional
     public ReturnObject addFreightModel(Long id, FreightModelInfoVo vo)
     {
         ReturnObject returnObject;
@@ -141,7 +139,7 @@ public class FreightModelDao {
         return returnObject;
     }
 
-    /*
+
     /**
     * @Description: 分页查询商店中的所有运费模板
     * @Param: [id, name, page, pageSize]
@@ -175,7 +173,6 @@ public class FreightModelDao {
         return new ReturnObject<>(voObjectPageInfo);
     }
 
-    @Transactional
     public ReturnObject modifyFreightModel(Long shopId,Long id,FreightModelInfoVo freightModelInfoVo)
     {
         ReturnObject returnObject;
