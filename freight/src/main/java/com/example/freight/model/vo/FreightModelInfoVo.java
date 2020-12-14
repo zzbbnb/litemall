@@ -13,6 +13,8 @@ import java.io.PrintWriter;
 @Data
 public class FreightModelInfoVo {
     private String name;
+
     private int type;
+
     private int unit;
 }
