@@ -5,8 +5,10 @@ import cn.edu.xmu.ooad.util.ReturnObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.freight.controller.FreightController;
+import com.example.freight.mapper.FreightModelMapper;
 import com.example.freight.mapper.PieceFreightModelMapper;
 import com.example.freight.model.bo.PieceFreightModelBo;
+import com.example.freight.model.po.FreightModelPo;
 import com.example.freight.model.po.PieceFreightModelPo;
 import com.example.freight.model.vo.PieceFreightModelInfoVo;
 import org.slf4j.Logger;
@@ -32,6 +34,8 @@ public class PieceFreightDao
 
     @Autowired
     private PieceFreightModelMapper pieceFreightModelMapper;
+    @Autowired
+    private FreightModelMapper freightModelMapper;
 
     /**
      * @Description: 管理员定义件数模板明细
@@ -44,7 +48,7 @@ public class PieceFreightDao
     {
         ReturnObject returnObject;
         QueryWrapper<PieceFreightModelPo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("freightModelId", id).eq("regionId", pieceFreightModelInfoVo.getRegionId());
+        queryWrapper.eq("freight_model_id", id).eq("region_id", pieceFreightModelInfoVo.getRegionId());
         PieceFreightModelPo pieceFreightModelPo = pieceFreightModelMapper.selectOne(queryWrapper);
         if (pieceFreightModelPo != null)
         {
@@ -53,6 +57,7 @@ public class PieceFreightDao
         }
         else
         {
+            pieceFreightModelPo = new PieceFreightModelPo();
             pieceFreightModelPo.setFreightModelId(id);
             pieceFreightModelPo.setAdditionalItems(pieceFreightModelInfoVo.getAdditionalItems());
             pieceFreightModelPo.setAdditionalItemsPrice(pieceFreightModelInfoVo.getAdditionalItemsPrice());
@@ -78,7 +83,7 @@ public class PieceFreightDao
     {
         ReturnObject<List> returnObject;
         QueryWrapper<PieceFreightModelPo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("freightModelId", id);
+        queryWrapper.eq("freight_model_id", id);
         List<PieceFreightModelPo> pieceFreightModelPoList = pieceFreightModelMapper.selectList(queryWrapper);
         List<PieceFreightModelBo> pieceFreightModelBoList = new ArrayList<>();
         for (PieceFreightModelPo pieceFreightModelPo : pieceFreightModelPoList)
@@ -97,20 +102,26 @@ public class PieceFreightDao
      * @Author: lzn
      * @Date 2020/12/14
      */
-    public ReturnObject putPieceItems(Long id, PieceFreightModelInfoVo pieceFreightModelInfoVo)
+    public ReturnObject putPieceItems(Long shopId, Long id, PieceFreightModelInfoVo pieceFreightModelInfoVo)
     {
         ReturnObject returnObject;
         QueryWrapper<PieceFreightModelPo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("id", id);
         PieceFreightModelPo pieceFreightModelPo = pieceFreightModelMapper.selectOne(queryWrapper);
 
-        QueryWrapper<PieceFreightModelPo> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.eq("regionId", pieceFreightModelInfoVo.getRegionId());
-        PieceFreightModelPo pieceFreightModelPo1 = pieceFreightModelMapper.selectOne(queryWrapper1);
-
         if(pieceFreightModelPo == null)
         {
-            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }
+
+        QueryWrapper<PieceFreightModelPo> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("region_id", pieceFreightModelInfoVo.getRegionId()).eq("freight_model_id", pieceFreightModelPo.getFreightModelId());
+        PieceFreightModelPo pieceFreightModelPo1 = pieceFreightModelMapper.selectOne(queryWrapper1);
+
+        FreightModelPo freightModelPo = freightModelMapper.selectById(pieceFreightModelPo.getFreightModelId());
+        if(!freightModelPo.getShopId().equals(shopId))
+        {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
         }
         else if(pieceFreightModelPo1 != null)
         {
@@ -140,7 +151,7 @@ public class PieceFreightDao
      * @Author: lzn
      * @Date 2020/12/14
      */
-    public ReturnObject delPieceItems(Long id)
+    public ReturnObject delPieceItems(Long shopId, Long id)
     {
         ReturnObject returnObject;
         QueryWrapper<PieceFreightModelPo> queryWrapper = new QueryWrapper<>();
@@ -150,6 +161,11 @@ public class PieceFreightDao
         if(pieceFreightModelPo == null)
         {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }
+        FreightModelPo freightModelPo = freightModelMapper.selectById(pieceFreightModelPo.getFreightModelId());
+        if(freightModelPo.getShopId() != shopId)
+        {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
         }
         pieceFreightModelMapper.delete(queryWrapper);
         returnObject = new ReturnObject<>(ResponseCode.OK);
