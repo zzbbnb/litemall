@@ -293,7 +293,7 @@ public class FreightControllerTest {
     * @Date: 2020/12/15 
     */
     @Test
-    public void deteleFreightModel() throws Exception
+    public void deleteFreightModel() throws Exception
     {
         String token = new JwtHelper().createToken(100L, 100l, 100);
         String responseString = this.mvc.perform(delete("/freight/shops/58/freightmodels/253").header("authorization", token)
