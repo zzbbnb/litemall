@@ -44,7 +44,7 @@ public class FreightController {
     @Autowired
     FreightService freightService;
 
-    @Autowired
+    @Autowired(required = false)
     IFreightModelService iFreightModelService;
 
     //此处需要有一个删除商品关联的运费模板信息的dubbo服务

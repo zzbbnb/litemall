@@ -164,7 +164,7 @@ public class FreightModelDao {
     public ReturnObject<PageInfo<VoObject>> getGoodsFreightModel(Long id,String name,int page,int pageSize)
     {
         List<FreightModelPo> freightModelPos;
-        QueryWrapper<FreightModelPo>  queryWrapper = new QueryWrapper<FreightModelPo>().eq("id",id);
+        QueryWrapper<FreightModelPo>  queryWrapper = new QueryWrapper<FreightModelPo>().eq("shop_id",id);
         if(name!=null) {
             queryWrapper = queryWrapper.eq("name",name);
         }
@@ -196,6 +196,16 @@ public class FreightModelDao {
      */
     public ReturnObject modifyFreightModel(Long shopId, Long id, FreightModelInfoVo freightModelInfoVo) {
         ReturnObject returnObject;
+
+        QueryWrapper<FreightModelPo> queryWrapper = new QueryWrapper<FreightModelPo>().eq("name", freightModelInfoVo.getName());
+        int cnt = freightModelMapper.selectCount(queryWrapper);
+        if(cnt>0)
+        {
+            logger.error("same name = " + shopId + " id = " + id +" name = "+freightModelInfoVo.getName());
+            returnObject = new ReturnObject<>(ResponseCode.FREIGHTNAME_SAME);
+            return returnObject;
+        }
+
         FreightModelPo freightModelPo = freightModelMapper.selectById(id);
         if(freightModelPo==null) {
             logger.error("not found freightModel shopid = " + shopId + " id = " + id);
@@ -206,6 +216,7 @@ public class FreightModelDao {
         }else {
             freightModelPo.setGmtModified(LocalDateTime.now());
             freightModelPo.setUnit(freightModelInfoVo.getUnit());
+            freightModelPo.setName(freightModelInfoVo.getName());
             freightModelMapper.updateById(freightModelPo);
             returnObject = new ReturnObject<>(ResponseCode.OK);
         }
