@@ -22,8 +22,8 @@ public class PieceFreightModelInfoVo
     @NotNull
     private Long regionId;
     private int firstItem;
-    private long firstItemPrice;
+    private Long firstItemPrice;
     private int additionalItems;
-    private long additionalItemsPrice;
+    private Long additionalItemsPrice;
 }
 

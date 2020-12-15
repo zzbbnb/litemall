@@ -1,6 +1,7 @@
 package com.example.freight.model.vo;
 
 import com.example.freight.model.bo.PieceFreightModelBo;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
  * @author: lzn
  * @create: 2020/12/14 10:13
  **/
+@Data
 public class PieceFreightModelRetVo
 {
     private Long id;

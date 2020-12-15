@@ -22,7 +22,6 @@ public class FreightModelRetVo {
     private int type;
     private int unit;
     @JsonProperty(value = "default")
-    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private boolean defaultModel;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
