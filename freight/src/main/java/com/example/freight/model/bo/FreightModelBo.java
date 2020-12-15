@@ -63,7 +63,7 @@ public class FreightModelBo implements VoObject {
         freightModelPo.setShopId(this.shopId);
         freightModelPo.setGmtCreate(LocalDateTime.now());
         freightModelPo.setDefaultModel(false);
-        freightModelPo.setGmtModified(this.getGmtCreate());
+        freightModelPo.setGmtModified(freightModelPo.getGmtCreate());
         freightModelPo.setUnit(this.unit);
         freightModelPo.setType(this.type);
         return freightModelPo;
