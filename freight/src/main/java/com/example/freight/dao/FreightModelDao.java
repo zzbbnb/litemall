@@ -3,7 +3,6 @@ package com.example.freight.dao;
 import cn.edu.xmu.ooad.model.VoObject;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.freight.controller.FreightController;
@@ -12,11 +11,11 @@ import com.example.freight.mapper.PieceFreightModelMapper;
 import com.example.freight.mapper.WeightFreightModelMapper;
 import com.example.freight.model.bo.FreightModelBo;
 import com.example.freight.model.bo.FreightModelDetail;
-import com.example.freight.model.bo.WeightFreightModelBo;
 import com.example.freight.model.bo.PieceFreightModelBo;
+import com.example.freight.model.bo.WeightFreightModelBo;
 import com.example.freight.model.po.FreightModelPo;
-import com.example.freight.model.po.WeightFreightModelPo;
 import com.example.freight.model.po.PieceFreightModelPo;
+import com.example.freight.model.po.WeightFreightModelPo;
 import com.example.freight.model.vo.FreightModelInfoVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -24,11 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.crypto.Data;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -164,7 +159,7 @@ public class FreightModelDao {
     public ReturnObject<PageInfo<VoObject>> getGoodsFreightModel(Long id,String name,int page,int pageSize)
     {
         List<FreightModelPo> freightModelPos;
-        QueryWrapper<FreightModelPo>  queryWrapper = new QueryWrapper<FreightModelPo>().eq("id",id);
+        QueryWrapper<FreightModelPo>  queryWrapper = new QueryWrapper<FreightModelPo>().eq("shop_id",id);
         if(name!=null) {
             queryWrapper = queryWrapper.eq("name",name);
         }
@@ -196,6 +191,16 @@ public class FreightModelDao {
      */
     public ReturnObject modifyFreightModel(Long shopId, Long id, FreightModelInfoVo freightModelInfoVo) {
         ReturnObject returnObject;
+
+        QueryWrapper<FreightModelPo> queryWrapper = new QueryWrapper<FreightModelPo>().eq("name", freightModelInfoVo.getName());
+        int cnt = freightModelMapper.selectCount(queryWrapper);
+        if(cnt>0)
+        {
+            logger.error("same name = " + shopId + " id = " + id +" name = "+freightModelInfoVo.getName());
+            returnObject = new ReturnObject<>(ResponseCode.FREIGHTNAME_SAME);
+            return returnObject;
+        }
+
         FreightModelPo freightModelPo = freightModelMapper.selectById(id);
         if(freightModelPo==null) {
             logger.error("not found freightModel shopid = " + shopId + " id = " + id);
@@ -206,6 +211,7 @@ public class FreightModelDao {
         }else {
             freightModelPo.setGmtModified(LocalDateTime.now());
             freightModelPo.setUnit(freightModelInfoVo.getUnit());
+            freightModelPo.setName(freightModelInfoVo.getName());
             freightModelMapper.updateById(freightModelPo);
             returnObject = new ReturnObject<>(ResponseCode.OK);
         }

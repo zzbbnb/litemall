@@ -20,7 +20,7 @@ public class PieceFreightModelBo implements VoObject, FreightModelDetail
 
     private Long id;
     private Long regionId;
-    private Long freight_model_id;
+    private Long freightModelId;
     private int firstItem;
     private long firstItemPrice;
     private int additionalItems;
