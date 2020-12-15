@@ -57,22 +57,7 @@ public class WeightFreightModelBo implements VoObject,FreightModelDetail {
     }
 
     @Override
-    public Long getFreight(int weight,Long count)
-    {
-        Long weightSum = weight*count;
-        Long freight = firstWeightFreight;
-        if(weightSum > firstWeight && weightSum <= 10)
-            freight += (weightSum-firstWeight)*tenPrice;
-        else if(weightSum > 10 && weightSum <= 50)
-            freight += (10-firstWeight)*tenPrice + (weightSum-10)*fiftyPrice;
-        else if(weightSum > 50 && weightSum <= 100)
-            freight += (10-firstWeight)*tenPrice + 40*fiftyPrice + (weightSum - 50)*hundredPrice;
-        else if(weightSum > 100 && weightSum <= 300)
-            freight += (10-firstWeight)*tenPrice + 40*fiftyPrice + 50*hundredPrice + (weightSum - 100)*trihunPrice;
-        else if(weightSum > 300)
-            freight += (10-firstWeight)*tenPrice + 40*fiftyPrice + 50*hundredPrice + 200*trihunPrice + (weightSum-300)*abovePrice;
-
-
-        return freight;
+    public Long getFreight(int weight,Long count) {
+        return null;
     }
 }

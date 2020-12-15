@@ -34,8 +34,6 @@ public class WeightFreightDao {
 
     @Autowired
     WeightFreightModelMapper weightFreightModelMapper;
-    @Autowired
-    FreightModelMapper freightModelMapper;
 
     @Autowired
     FreightModelMapper mapper;
@@ -110,26 +108,20 @@ public class WeightFreightDao {
      * @Author: lzn
      * @Date 2020/12/14
      */
-    public ReturnObject putWeightItems(Long shopId, Long id, WeightFreightModelInfoVo weightFreightModelInfoVo)
+    public ReturnObject putWeightItems(Long id, WeightFreightModelInfoVo weightFreightModelInfoVo)
     {
         ReturnObject returnObject;
         QueryWrapper<WeightFreightModelPo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("id", id);
         WeightFreightModelPo weightFreightModelPo = weightFreightModelMapper.selectOne(queryWrapper);
-        if(weightFreightModelPo == null)
-        {
-            return new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
-        }
 
         QueryWrapper<WeightFreightModelPo> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.eq("region_id", weightFreightModelInfoVo.getRegionId()).eq("freight_model_id", weightFreightModelPo.getFreightModelId());;
+        queryWrapper1.eq("regionId", weightFreightModelInfoVo.getRegionId());
         WeightFreightModelPo weightFreightModelPo1 = weightFreightModelMapper.selectOne(queryWrapper1);
 
-
-        FreightModelPo freightModelPo = freightModelMapper.selectById(weightFreightModelPo.getFreightModelId());
-        if(!freightModelPo.getShopId().equals(shopId))
+        if(weightFreightModelPo == null)
         {
-            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
         }
         else if(weightFreightModelPo1 != null)
         {
@@ -166,7 +158,7 @@ public class WeightFreightDao {
      * @Author: lzn
      * @Date 2020/12/14
      */
-    public ReturnObject delWeightItems(Long shopId, Long id)
+    public ReturnObject delWeightItems(Long id)
     {
         ReturnObject returnObject;
         QueryWrapper<WeightFreightModelPo> queryWrapper = new QueryWrapper<>();
@@ -176,11 +168,6 @@ public class WeightFreightDao {
         if(weightFreightModelPo == null)
         {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
-        }
-        FreightModelPo freightModelPo = freightModelMapper.selectById(weightFreightModelPo.getFreightModelId());
-        if(freightModelPo.getShopId() != shopId)
-        {
-            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
         }
         weightFreightModelMapper.delete(queryWrapper);
         returnObject = new ReturnObject<>(ResponseCode.OK);

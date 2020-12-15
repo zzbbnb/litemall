@@ -238,13 +238,13 @@ public class FreightModelDao {
     }
 
 
-    /**
+    /*
      * @Description:管理员克隆店铺的运费模板
      * @Param:  [shopId, id]
      * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
      * @Author: lzn
      * @Date 2020/12/10
-     */
+     **/
     public ReturnObject cloneFreightModel(Long shopId, Long id)
     {
         ReturnObject returnObject;
@@ -263,7 +263,6 @@ public class FreightModelDao {
         {
             FreightModelPo freightModelPo2 = freightModelPo.objectClone();
             freightModelPo2.setGmtCreate(LocalDateTime.now());
-            freightModelPo2.setGmtModified(LocalDateTime.now());
             freightModelPo2.setName(freightModelPo.getName() + UUID.randomUUID());
             freightModelMapper.insert(freightModelPo2);
             FreightModelBo freightModelBo = new FreightModelBo(freightModelPo2);
@@ -297,17 +296,45 @@ public class FreightModelDao {
     }
 
 
-    /**
+    /*
      * @Description: (查看id与shopId是否对应)
      * @Param:  [shopId, id]
      * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
      * @Author: lzn
      * @Date 2020/12/14
-     */
+     **/
     public ReturnObject examIdScope(Long shopId, Long id)
     {
         ReturnObject returnObject = new ReturnObject<>(ResponseCode.OK);
         FreightModelPo freightModelPo = freightModelMapper.selectById(id);
+        if (freightModelPo == null)
+        {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            logger.error("not found freightModel shopId = " + shopId + " id = " + id);
+        }
+        else if (!freightModelPo.getShopId().equals(shopId))
+        {
+            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            logger.error("freightModel shop Id:" + freightModelPo.getShopId() + " not equal to path shop Id:" + shopId);
+        }
+        return returnObject;
+    }
+
+
+
+    /*
+     * @Description: (查看FreightModelId与shopId是否对应)
+     * @Param:  [shopId, id]
+     * @return: {@link cn.edu.xmu.ooad.util.ReturnObject}
+     * @Author: lzn
+     * @Date 2020/12/14
+     **/
+    public ReturnObject examFreightModelIdScope(Long shopId, Long id)
+    {
+        ReturnObject returnObject = new ReturnObject<>(ResponseCode.OK);
+        QueryWrapper<FreightModelPo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("freightModelId", id);
+        FreightModelPo freightModelPo = freightModelMapper.selectOne(queryWrapper);
         if (freightModelPo == null)
         {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);

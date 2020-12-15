@@ -44,7 +44,7 @@ public class FreightController {
     @Autowired
     FreightService freightService;
 
-    @Autowired(required = false)
+    @Autowired
     IFreightModelService iFreightModelService;
 
     //此处需要有一个删除商品关联的运费模板信息的dubbo服务
@@ -219,13 +219,13 @@ public class FreightController {
         }
     }
 
-    /**
+    /*
      * @Description: 管理员克隆店铺的运费模板
      * @Param:  [shopId, id]
      * @return: {@link java.lang.Object}
      * @Author: lzn
      * @Date 2020/12/10
-     */
+     **/
     @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/clone")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header",dataType = "String",name = "authorization",value = "Token",required = true),
@@ -338,7 +338,7 @@ public class FreightController {
         ReturnObject returnObject = freightService.getPieceItems(shopId, id);
         if (returnObject.getCode() == ResponseCode.OK)
         {
-            return Common.getListRetObject(returnObject);
+            return Common.getRetObject(returnObject);
         }
         else
         {
@@ -355,7 +355,7 @@ public class FreightController {
      * @Author: lzn
      * @Date 2020/12/14
      */
-    @ApiOperation(value = "/shops/{shopId}/pieceItems/{id}")
+    @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/pieceItems")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
             @ApiImplicitParam(name = "shopId", value = "商户ID", required = true, dataType = "Integer", paramType = "path"),
@@ -368,7 +368,7 @@ public class FreightController {
             @ApiResponse(code = 803, message = "运费模板中该地区已经定义")
     })
     @Audit
-    @PutMapping("shops/{shopId}/pieceItems/{id}")
+    @PutMapping("shops/{shopId}/freightmodels/{id}/pieceItems")
     @ResponseBody
     public Object putPieceItems(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody PieceFreightModelInfoVo pieceFreightModelInfoVo, BindingResult result, HttpServletResponse httpServletResponse)
     {
@@ -397,7 +397,7 @@ public class FreightController {
      * @Author: lzn
      * @Date 2020/12/14
      */
-    @ApiOperation(value = "/shops/{shopId}/pieceItems/{id}")
+    @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/pieceItems")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
             @ApiImplicitParam(name = "shopId", value = "商户ID", required = true, dataType = "Integer", paramType = "path"),
@@ -408,7 +408,7 @@ public class FreightController {
             @ApiResponse(code = 504, message = "操作id不存在"),
     })
     @Audit
-    @DeleteMapping("shops/{shopId}/pieceItems/{id}")
+    @DeleteMapping("shops/{shopId}/freightmodels/{id}/pieceItems")
     @ResponseBody
     public Object delPieceItems(@PathVariable Long shopId, @PathVariable Long id)
     {
@@ -432,7 +432,7 @@ public class FreightController {
      * @Author: lzn
      * @Date 2020/12/14
      */
-    @ApiOperation(value = "/shops/{shopId}/weightItems/{id}")
+    @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/weightItems")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
             @ApiImplicitParam(name = "shopId", value = "商户ID", required = true, dataType = "Integer", paramType = "path"),
@@ -445,7 +445,7 @@ public class FreightController {
             @ApiResponse(code = 803, message = "运费模板中该地区已经定义")
     })
     @Audit
-    @PutMapping("shops/{shopId}/weightItems/{id}")
+    @PutMapping("shops/{shopId}/freightmodels/{id}/weightItems")
     @ResponseBody
     public Object putWeightItems(@PathVariable Long shopId, @PathVariable Long id, @Validated @RequestBody WeightFreightModelInfoVo weightFreightModelInfoVo, BindingResult result, HttpServletResponse httpServletResponse)
     {
@@ -473,7 +473,7 @@ public class FreightController {
      * @Author: lzn
      * @Date 2020/12/14
      */
-    @ApiOperation(value = "/shops/{shopId}/weightItems/{id}")
+    @ApiOperation(value = "/shops/{shopId}/freightmodels/{id}/weightItems")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
             @ApiImplicitParam(name = "shopId", value = "商户ID", required = true, dataType = "Integer", paramType = "path"),
@@ -484,7 +484,7 @@ public class FreightController {
             @ApiResponse(code = 504, message = "操作id不存在"),
     })
     @Audit
-    @DeleteMapping("shops/{shopId}/weightItems/{id}")
+    @DeleteMapping("shops/{shopId}/freightmodels/{id}/weightItems")
     @ResponseBody
     public Object delWeightItems(@PathVariable Long shopId, @PathVariable Long id)
     {

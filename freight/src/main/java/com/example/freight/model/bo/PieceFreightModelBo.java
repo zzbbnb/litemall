@@ -56,10 +56,7 @@ public class PieceFreightModelBo implements VoObject, FreightModelDetail
     @Override
     public Long getFreight(int weight,Long count)
     {
-        Long freight = firstItemPrice;
-        if(count > firstItem)
-            freight += additionalItemsPrice*((int)((count - firstItem)/additionalItems) + 1);
-        return freight;
+        return null;
     }
 
 }

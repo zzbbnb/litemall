@@ -31,9 +31,9 @@ public class FreightService {
     FreightModelDao freightModelDao;
 
     @Autowired
+
     PieceFreightDao pieceFreightDao;
 
-    @Autowired
     WeightFreightDao weightFreightDao;
 
     /** 
@@ -142,8 +142,15 @@ public class FreightService {
     @Transactional
     public ReturnObject putPieceItems(Long shopId, Long id, PieceFreightModelInfoVo pieceFreightModelInfoVo)
     {
-
-            return pieceFreightDao.putPieceItems(shopId, id, pieceFreightModelInfoVo);
+        ReturnObject returnObject = freightModelDao.examFreightModelIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return pieceFreightDao.putPieceItems(id, pieceFreightModelInfoVo);
+        }
+        else
+        {
+            return returnObject;
+        }
     }
 
 
@@ -157,12 +164,20 @@ public class FreightService {
     @Transactional
     public ReturnObject delPieceItems(Long shopId, Long id)
     {
-            return pieceFreightDao.delPieceItems(shopId, id);
+        ReturnObject returnObject = freightModelDao.examFreightModelIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return pieceFreightDao.delPieceItems(id);
+        }
+        else
+        {
+            return returnObject;
+        }
     }
 
 
     /**
-     * @Description: 店家或管理员修改重量模板明细
+     * @Description: 店家或管理员修改件数模板明细
      * @Param:  [shopId, id, weightFreightModelInfoVo]
      * @return: {@link ReturnObject}
      * @Author: lzn
@@ -171,7 +186,15 @@ public class FreightService {
     @Transactional
     public ReturnObject putWeightItems(Long shopId, Long id, WeightFreightModelInfoVo weightFreightModelInfoVo)
     {
-            return weightFreightDao.putWeightItems(shopId, id, weightFreightModelInfoVo);
+        ReturnObject returnObject = freightModelDao.examFreightModelIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return weightFreightDao.putWeightItems(id, weightFreightModelInfoVo);
+        }
+        else
+        {
+            return returnObject;
+        }
     }
 
 
@@ -185,7 +208,15 @@ public class FreightService {
     @Transactional
     public ReturnObject delWeightItems(Long shopId, Long id)
     {
-            return weightFreightDao.delWeightItems(shopId, id);
+        ReturnObject returnObject = freightModelDao.examFreightModelIdScope(shopId, id);
+        if(returnObject.getCode() == ResponseCode.OK)
+        {
+            return weightFreightDao.delWeightItems(id);
+        }
+        else
+        {
+            return returnObject;
+        }
     }
 
     public ReturnObject<PageInfo<VoObject>> getGoodsFreightModel(Long id,String name,int page,int pageSize)
