@@ -1,8 +1,10 @@
-package com.example.oreder;
+package com.example.order;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@MapperScan("com.example.order.mapper")
 @SpringBootApplication
 public class OrederApplication {
 
