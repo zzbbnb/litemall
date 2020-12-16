@@ -1,8 +1,13 @@
 package com.example.payment.controller;
 
+import cn.edu.xmu.ooad.annotation.Audit;
+import cn.edu.xmu.ooad.annotation.LoginUser;
+import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.payment.dao.PaymentDao;
-import com.example.payment.model.vo.PayPatternAndName;
-import com.example.payment.model.vo.State;
+import com.example.payment.model.vo.PayPatternAndNameRetVo;
+import com.example.payment.service.PaymentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,33 +17,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(value="payments",produces = "application/json;charset=UTF-8")
+@RequestMapping(value="/payment/payments",produces = "application/json;charset=UTF-8")
 public class PaymentController {
+    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
+
+
     @Autowired
-    PaymentDao paymentDao;
+    PaymentService paymentService;
+
+    /**
+    * @Description: 获取支付单的所有状态
+    * @Param: []
+    * @return: java.lang.Object
+    * @Author: alex101
+    * @Date: 2020/12/16
+    */
+    @Audit
     @GetMapping("states")
     public Object getAllPaymentState()
     {
-        List<Payment> paymentsAll=paymentDao.getAllPayments();
-        List<State> paymentstates=new ArrayList<>();
-        for(Payment p:paymentsAll) {
-            ResponseCode re = ResponseCode.getByCode(p.getState());
-            paymentstates.add(new State(re));
+        logger.debug("get all paymentState");
+        return paymentService.getAllPaymentState();
 
-        }
-//        List<Test>t=new ArrayList<>();
-//        t.add(new Test(1,2));
-//        t.add(new Test(3,4));
-        return ResponseUtil.ok(paymentstates);
     }
+
+    /** 
+    * @Description: 获取所有支付方式
+    * @Param: [] 
+    * @return: java.lang.Object 
+    * @Author: alex101
+    * @Date: 2020/12/16 
+    */
+    @Audit
     @GetMapping("patterns")
     public Object getAllPatterns() {
-        List<Payment> paymentsAll = paymentDao.getAllPayments();
-        List<PayPatternAndName> pan = new ArrayList<>();
-        for (Payment p : paymentsAll) {
-            PayPatternAndName pp = new PayPatternAndName(p.getPaymentPattern().toString(), p.getPaySn());
-            pan.add(pp);
-        }
-        return ResponseUtil.ok(pan);
+        logger.debug("get all paymentPatterns");
+        return paymentService.getAllPaymentPatterns();
     }
 }

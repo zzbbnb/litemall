@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(value={"hibernateLazyInitializer","handler","fieldHandler"})
-public class PayPatternAndName {
+public class PayPatternAndNameRetVo {
     String payPattern;
     String name;
-    public PayPatternAndName(String p,String s)
+    public PayPatternAndNameRetVo(String p, String s)
     {
         payPattern=p;
         name=s;
