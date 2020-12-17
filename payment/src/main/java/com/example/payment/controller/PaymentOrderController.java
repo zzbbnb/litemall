@@ -8,6 +8,7 @@ import com.example.payment.dao.PaymentDao;
 import com.example.payment.dao.RefundDao;
 import com.example.payment.model.vo.PaymentInfoVo;
 import com.example.payment.service.PaymentService;
+import com.example.payment.service.RefundService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,9 @@ public class PaymentOrderController {
 
     @Autowired
     PaymentService paymentService;
+
+    @Autowired
+    RefundService refundService;
 
 
     /**
@@ -49,7 +53,7 @@ public class PaymentOrderController {
     }
 
     /** 
-    * @Description: 买家查询自己的支付信息,todo:还没完成dubbo调用
+    * @Description: 买家查询自己的支付信息 todo:还没完成dubbo调用
     * @Param: [id, userId] 
     * @return: java.lang.Object 
     * @Author: alex101
@@ -72,6 +76,24 @@ public class PaymentOrderController {
 
         /* 若正常，接着处理 */
         ReturnObject returnObject = paymentService.getPaymentsByOrderId(id);
+        return Common.getListRetObject(returnObject);
+    }
+
+    /**
+     * @Description: 买家查询自己的退款信息 todo:还没完成dubbo调用
+     * @Param:  [orderId, userId]
+     * @return: java.lang.Object
+     * @Author: lzn
+     * @Date 2020/12/17
+     */
+    @GetMapping("{id}/refunds")
+    @Audit
+    public Object getRefundByOrderId(@PathVariable("id") long orderId,@LoginUser Long userId)
+    {
+        /*先校验一下该orderid是不是本用户自己的*/
+
+        /* 若正常，接着处理 */
+        ReturnObject returnObject = refundService.getRefundsByOrderId(orderId);
         return Common.getListRetObject(returnObject);
     }
 
