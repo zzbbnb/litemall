@@ -61,4 +61,14 @@ public class PaymentService {
     }
 
 
+    /**
+     * @Description: 根据售后单id查询支付信息
+     * @Param:  [id]
+     * @return: cn.edu.xmu.ooad.util.ReturnObject
+     * @Author: lzn
+     * @Date 2020/12/17
+     */
+    public ReturnObject getPaymentsByAftersaleId(Long id) { return paymentDao.getPaymentsByAftersaleId(id); }
+
+
 }

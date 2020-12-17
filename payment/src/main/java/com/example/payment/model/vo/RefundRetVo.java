@@ -1,5 +1,6 @@
 package com.example.payment.model.vo;
 
+import com.example.payment.model.bo.RefundBo;
 import lombok.Data;
 
 import java.util.Date;
@@ -28,4 +29,15 @@ public class RefundRetVo {
 
     private Long aftersaleId;
 
+    public RefundRetVo(RefundBo refundBo)
+    {
+        id = refundBo.getId();
+        paymentId = refundBo.getPaymentId();
+        amount = refundBo.getAmount();
+        state = refundBo.getState();
+        gmtCreate = refundBo.getGmtCreate();
+        gmtModified = refundBo.getGmtModified();
+        orderId = refundBo.getOrderId();
+        aftersaleId = refundBo.getAftersaleId();
+    }
 }

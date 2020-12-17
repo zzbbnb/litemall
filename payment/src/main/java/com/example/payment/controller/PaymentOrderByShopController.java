@@ -2,17 +2,18 @@ package com.example.payment.controller;
 
 import cn.edu.xmu.ooad.annotation.Audit;
 import cn.edu.xmu.ooad.util.Common;
+import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.payment.dao.PaymentDao;
 import com.example.payment.dao.RefundDao;
+import com.example.payment.model.vo.AmountVo;
 import com.example.payment.service.PaymentService;
+import com.example.payment.service.RefundService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,8 @@ public class PaymentOrderByShopController {
 
     @Autowired
     PaymentService paymentService;
+    @Autowired
+    RefundService refundService;
 
     
     /** 
@@ -51,6 +54,104 @@ public class PaymentOrderByShopController {
         /* 与传入的shopId一致才可放行 */
         ReturnObject returnObject = new ReturnObject(paymentService.getPaymentsByOrderId(orderId));
         return Common.getRetObject(returnObject);
+    }
+
+
+
+    /**
+     * @Description: 管理员查询售后单的支付信息，todo:缺少dubbo远程调用
+     * @Param:  [shopId, aftersaleId]
+     * @return: java.lang.Object
+     * @Author: lzn
+     * @Date 2020/12/17
+     */
+    @ApiOperation(value = "管理员查询售后单的支付信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
+            @ApiImplicitParam(name = "id",value = "售后单id",required = true,dataType = "Integer",paramType = "path"),
+            @ApiImplicitParam(name = "shopId",value = "店铺id",required = true,dataType = "Integer",paramType = "path"),
+
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+    })
+    @Audit
+    @GetMapping("{shopId}/aftersales/{id}/payments")
+    public Object getPaymentsByAftersaleIdAndShopId(@PathVariable("shopId")long shopId,
+                                                    @PathVariable("id")long aftersaleId)
+    {
+        /* 先根据aftersalfeId查出shopId */
+        /* 与传入的shopId一致才可放行 */
+        ReturnObject returnObject = new ReturnObject(paymentService.getPaymentsByAftersaleId(aftersaleId));
+        if(returnObject.getCode() == ResponseCode.OK)
+            return Common.getRetObject(returnObject);
+        else
+        {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+    /**
+     * @Description: 管理员创建退款信息 todo：mapper
+     * @Param:  [shopId, paymentId, amountVo]
+     * @return: java.lang.Object
+     * @Author: lzn
+     * @Date 2020/12/17
+     */
+    @Audit
+    @GetMapping("{shopId}/payments/{id}/refunds")
+    public Object postRefundsByPayments(@PathVariable("shopId") Long shopId, @PathVariable("id") Long paymentId, @RequestBody AmountVo amountVo)
+    {
+        ReturnObject returnObject = new ReturnObject(refundService.postRefundsByPayments(shopId, paymentId, amountVo));
+        if(returnObject.getCode() == ResponseCode.OK)
+            return Common.getRetObject(returnObject);
+        else
+        {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+    /**
+     * @Description: 管理员查询订单的退款信息 todo:缺少dubbo远程调用
+     * @Param:  [shopId, orderId]
+     * @return: java.lang.Object
+     * @Author: lzn
+     * @Date 2020/12/17
+     */
+    @Audit
+    @GetMapping("{shopId}/orders/{id}/refunds")
+    public Object getRefundsByOrderIdAndShopId(@PathVariable("shopId") Long shopId, @PathVariable("id") Long orderId)
+    {
+        /* 先根据orderId查出shopId */
+        /* 与传入的shopId一致才可放行 */
+        ReturnObject returnObject = new ReturnObject(refundService.getRefundsByOrderId(orderId));
+        if(returnObject.getCode() == ResponseCode.OK)
+            return Common.getRetObject(returnObject);
+        else
+        {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+    /**
+     * @Description: 管理员查询售后单的退款信息 todo:缺少dubbo远程调用
+     * @Param:  [shopId, aftersaleId]
+     * @return: java.lang.Object
+     * @Author: lzn
+     * @Date 2020/12/17
+     */
+    @GetMapping("{shopId}/aftersales/{id}/refunds")
+    public Object getRefundsByAftersaleIdAndShopId(@PathVariable("shopId") Long shopId, @PathVariable("id") Long aftersaleId)
+    {
+        /* 先根据aftersaleId查出shopId */
+        /* 与传入的shopId一致才可放行 */
+        ReturnObject returnObject = new ReturnObject(refundService.getRefundsByAftersaleId(aftersaleId));
+        if(returnObject.getCode() == ResponseCode.OK)
+            return Common.getRetObject(returnObject);
+        else
+        {
+            return Common.decorateReturnObject(returnObject);
+        }
     }
 
 

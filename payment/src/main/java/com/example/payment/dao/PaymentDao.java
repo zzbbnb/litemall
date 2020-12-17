@@ -39,12 +39,19 @@ public class PaymentDao {
         ReturnObject returnObject = new ReturnObject(paymentBos);
         return returnObject;
     }
-    public List<PaymentPo> getPaymentsByAftersaleId(long aftersaleId)
+    public ReturnObject getPaymentsByAftersaleId(long aftersaleId)
     {
         PaymentPoExample paymentExample=new PaymentPoExample();
         PaymentPoExample.Criteria criteria=paymentExample.createCriteria();
         criteria.andAftersaleIdEqualTo(aftersaleId);
-        return paymentPoMapper.selectByExample(paymentExample);
+        List<PaymentPo> paymentPos = paymentPoMapper.selectByExample(paymentExample);
+        List<PaymentBo> paymentBos = new ArrayList<>(paymentPos.size());
+        for(PaymentPo paymentPo:paymentPos)
+        {
+            paymentBos.add(new PaymentBo(paymentPo));
+        }
+        ReturnObject returnObject = new ReturnObject(paymentBos);
+        return returnObject;
     }
 
     public ReturnObject getAllPaymentsState()
@@ -103,6 +110,20 @@ public class PaymentDao {
         ReturnObject returnObject=null;
         PaymentBo paymentBo = new PaymentBo(paymentPoMapper.selectByPrimaryKey(id));
         returnObject = new ReturnObject(paymentBo);
+        return returnObject;
+    }
+
+
+    /**
+     * @Description: 根据paymentId查询shopId todo: mapper
+     * @Param:  [paymentId]
+     * @return: cn.edu.xmu.ooad.util.ReturnObject
+     * @Author: lzn
+     * @Date 2020/12/17
+     */
+    public ReturnObject getShopIdByPaymentId(Long paymentId)
+    {
+        ReturnObject returnObject = null;
         return returnObject;
     }
 }
