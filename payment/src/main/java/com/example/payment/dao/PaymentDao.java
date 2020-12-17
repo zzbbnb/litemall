@@ -1,10 +1,13 @@
 package com.example.payment.dao;
 
+import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.payment.mapper.PaymentPoMapper;
+import com.example.payment.model.bo.PaymentBo;
 import com.example.payment.model.po.PaymentPo;
 import com.example.payment.model.po.PaymentPoExample;
 import com.example.payment.model.vo.PayPatternAndNameRetVo;
+import com.example.payment.model.vo.PaymentInfoVo;
 import com.example.payment.model.vo.StateRetVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -22,12 +25,19 @@ public class PaymentDao {
         return paymentPoMapper.selectByExample(null);
     }
 
-    public List<PaymentPo> getPaymentsByOrderId(long orderId)
+    public ReturnObject getPaymentsByOrderId(long orderId)
     {
         PaymentPoExample paymentExample=new PaymentPoExample();
         PaymentPoExample.Criteria criteria=paymentExample.createCriteria();
         criteria.andOrderIdEqualTo(orderId);
-        return paymentPoMapper.selectByExample(paymentExample);
+        List<PaymentPo> paymentPos = paymentPoMapper.selectByExample(paymentExample);
+        List<PaymentBo> paymentBos = new ArrayList<>(paymentPos.size());
+        for(PaymentPo paymentPo:paymentPos)
+        {
+            paymentBos.add(new PaymentBo(paymentPo));
+        }
+        ReturnObject returnObject = new ReturnObject(paymentBos);
+        return returnObject;
     }
     public List<PaymentPo> getPaymentsByAftersaleId(long aftersaleId)
     {
@@ -60,6 +70,39 @@ public class PaymentDao {
         return new ReturnObject(payPatternAndNameRetVos);
     }
 
+    /** 
+    * @Description: 创建支付单，todo 
+    * @Param: [id, vo] 
+    * @return: cn.edu.xmu.ooad.util.ReturnObject 
+    * @Author: alex101
+    * @Date: 2020/12/16 
+    */
+    public ReturnObject createPayment(Long id, PaymentInfoVo vo)
+    {
+        ReturnObject returnObject=null;
+        PaymentBo paymentBo = new PaymentBo();
+        paymentBo.setPaymentPattern(vo.getPaymentPattern());
+        paymentBo.setOrderId(id);
+        /* 初始设置支付成功 */
+        paymentBo.setState((byte)1 );
+        paymentBo.setAftersaleId(null);
+        //paymentBo.
+        return null;
+    }
 
 
+    /** 
+    * @Description: 根据id查询支付信息 
+    * @Param: [id] 
+    * @return: cn.edu.xmu.ooad.util.ReturnObject 
+    * @Author: alex101
+    * @Date: 2020/12/17 
+    */
+    public ReturnObject getPaymentById(Long id)
+    {
+        ReturnObject returnObject=null;
+        PaymentBo paymentBo = new PaymentBo(paymentPoMapper.selectByPrimaryKey(id));
+        returnObject = new ReturnObject(paymentBo);
+        return returnObject;
+    }
 }

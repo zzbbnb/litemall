@@ -2,6 +2,7 @@ package com.example.payment.service;
 
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.payment.dao.PaymentDao;
+import com.example.payment.model.vo.PaymentInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,19 +13,52 @@ public class PaymentService {
     @Autowired
     PaymentDao paymentDao;
 
+    /**
+     * @Description: 返回所有订单状态
+     * @Param: []
+     * @return: cn.edu.xmu.ooad.util.ReturnObject
+     * @Author: alex101
+     * @Date: 2020/12/16
+     */
 
     public ReturnObject getAllPaymentState() {
         return paymentDao.getAllPaymentsState();
     }
 
-//    public List<Refund> getRefundByOrderId(long orderId)//这个是通过orderid找payment，然后通过paymentid找renfund
-//    {
-//
-//    }
 
-    public ReturnObject getAllPaymentPatterns()
-    {
+    /**
+     * @Description: 返回所有支付方式
+     * @Param: []
+     * @return: cn.edu.xmu.ooad.util.ReturnObject
+     * @Author: alex101
+     * @Date: 2020/12/16
+     */
+    public ReturnObject getAllPaymentPatterns() {
         return paymentDao.getAllPaymentPatterns();
     }
+
+    /**
+     * @Description: 用户创建支付单
+     * @Param: [id, vo]
+     * @return: cn.edu.xmu.ooad.util.ReturnObject
+     * @Author: alex101
+     * @Date: 2020/12/16
+     */
+    public ReturnObject createPayment(Long id, PaymentInfoVo vo) {
+        return paymentDao.createPayment(id, vo);
+    }
+
+    /** 
+    * @Description: 根据订单id查询支付信息
+    * @Param: [id] 
+    * @return: cn.edu.xmu.ooad.util.ReturnObject 
+    * @Author: alex101
+    * @Date: 2020/12/17 
+    */
+    public ReturnObject getPaymentsByOrderId(Long id)
+    {
+        return paymentDao.getPaymentsByOrderId(id);
+    }
+
 
 }
