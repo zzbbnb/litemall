@@ -4,6 +4,7 @@ import com.example.payment.model.po.PaymentPo;
 import com.example.payment.model.po.PaymentPoExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,4 +30,7 @@ public interface PaymentPoMapper {
     int updateByPrimaryKeySelective(PaymentPo record);
 
     int updateByPrimaryKey(PaymentPo record);
+
+    @Select("select distinct state from payment")
+    List<Byte> getAllState();
 }
