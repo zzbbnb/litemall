@@ -15,38 +15,38 @@ import java.util.List;
 @Data
 public class OrderDetail {
     private Long id;
-    //private Long customerId;
+    private String orderSn;
 
     private customer customers;
 
     private shop shops;
-
-    //private Long shopId;
-
-    private String orderSn;
     private Long pid;
-    private String consignee;
+    private int orderType;
+    private int state;
+    private int subState;
+    private LocalDateTime gmtCreate;
+    private LocalDateTime gmtModified;
+    private LocalDateTime confirmTime;
+    private Long originPrice;
+    private Long discountPrice;
+    private Long freightPrice;
+    private Integer rebateNum;
+    private String message;
     private Long regionId;
     private String address;
     private String mobile;
-    private String message;
-    private int orderType;
-    private Long freightPrice;
+    private String consignee;
     private Long couponId;
-    private Long couponActivityId;
-    private Long discountPrice;
-    private Long originPrice;
-    private Long presaleId;
-    private Long grouponDiscount;
-    private Integer rebateNum;
-    private LocalDateTime confirmTime;
-    private String shipmentSn;
-    private int state;
-    private int substate;
-    private int beDeleted;
-    private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
     private Long grouponId;
+    private Long presaleId;
+    private String shipmentSn;
+
+    /*
+    private Long couponActivityId;
+    private Long grouponDiscount;
+    private int beDeleted;*/
+
+
 
     private List<orderitem> orderitems;
 
@@ -63,17 +63,17 @@ public class OrderDetail {
         this.orderType=orderBo.getOrderType();
         this.message=orderBo.getMessage();
         this.mobile=orderBo.getMobile();
-        this.couponActivityId=orderBo.getCouponActivityId();
+        //this.couponActivityId=orderBo.getCouponActivityId();
         this.discountPrice=orderBo.getDiscountPrice();
         this.originPrice=orderBo.getOriginPrice();
         this.presaleId=orderBo.getPresaleId();
-        this.grouponDiscount=orderBo.getGrouponDiscount();
+        //this.grouponDiscount=orderBo.getGrouponDiscount();
         this.rebateNum=orderBo.getRebateNum();
         this.confirmTime=orderBo.getConfirmTime();
         this.shipmentSn=orderBo.getShipmentSn();
         this.state=orderBo.getState();
-        this.substate=orderBo.getSubstate();
-        this.beDeleted=orderBo.getBeDeleted();
+        this.subState=orderBo.getSubstate();
+        //this.beDeleted=orderBo.getBeDeleted();
         this.gmtCreate=orderBo.getGmtCreate();
         this.gmtModified=orderBo.getGmtModified();
         this.grouponId=orderBo.getGrouponId();

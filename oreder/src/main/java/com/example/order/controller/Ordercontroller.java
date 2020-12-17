@@ -1,12 +1,16 @@
 package com.example.order.controller;
 
 import cn.edu.xmu.ooad.annotation.Audit;
+import cn.edu.xmu.ooad.annotation.Depart;
 import cn.edu.xmu.ooad.annotation.LoginUser;
 import cn.edu.xmu.ooad.util.Common;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.order.model.bo.NewOrder;
 import com.example.order.model.vo.NewOrderVO;
+import com.example.order.model.vo.OrderFreightSn;
+import com.example.order.model.vo.OrderMessage;
+import com.example.order.model.vo.modifyOrder;
 import com.example.order.service.OrderService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -26,7 +30,7 @@ import java.time.LocalDateTime;
  */
 
 @Controller
-@RequestMapping(value = "/orders", produces = "application/json;charset=UTF-8")
+@RequestMapping(produces = "application/json;charset=UTF-8")
 public class Ordercontroller {
 
     private static final Logger logger = LoggerFactory.getLogger(Ordercontroller.class);
@@ -51,7 +55,7 @@ public class Ordercontroller {
             @ApiResponse(code = 0,message = "成功")
     })
     @Audit
-    @GetMapping(value = "/status")
+    @GetMapping(value = "/orders/status")
     @ResponseBody
     public Object getOrderStatus(@LoginUser Long authorization)
     {
@@ -77,7 +81,7 @@ public class Ordercontroller {
             @ApiResponse(code = 0, message = "成功")
     })
     @Audit
-    @GetMapping
+    @GetMapping(value = "/orders")
     @ResponseBody
     public Object getOrderList(@LoginUser Long authorization,String orderSn,int state,
                                String beginTime,String endTime,int page,int pageSize)
@@ -100,7 +104,7 @@ public class Ordercontroller {
             @ApiResponse(code = 0,message = "成功")
     })
     @Audit
-    @PostMapping
+    @PostMapping(value = "/orders")
     public Object postOrder(@LoginUser Long authorization, @RequestBody NewOrderVO newOrderVO,
                             BindingResult bindingResult)
     {
@@ -136,7 +140,7 @@ public class Ordercontroller {
             @ApiResponse(code=0,message = "成功")
     })
     @Audit
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/orders/{id}")
     public Object GetOrderDetail(@LoginUser Long authorization, @PathVariable int id)
     {
         logger.debug("User_id:"+authorization+" Order_id:"+id);
@@ -155,12 +159,65 @@ public class Ordercontroller {
             @ApiImplicitParam(paramType = "path",dataType = "Integer",name = "id", value = "订单id", required = true),
             @ApiImplicitParam(paramType = "body",dataType = "Object",name = "body", value = "订单id", required = true)
     })
-
+    @ApiResponses({
+            @ApiResponse(code=0,message = "成功")
+    })
     @Audit
-    @PutMapping(value = "/{id}")
-    public Object PutOrder()
+    @PutMapping(value = "/orders/{id}")
+    public Object modifyOrder(@LoginUser Long authorization, @PathVariable int id, modifyOrder order)
     {
+        ReturnObject returnObject=orderService.modifyOrder(id,order);
 
+        if (returnObject.getCode() == ResponseCode.OK) {
+            return Common.getRetObject(returnObject);
+        } else {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+    @ApiOperation(value = "买家标记确认收货")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header",dataType = "String",name = "authorization", value = "Token", required = true),
+            @ApiImplicitParam(paramType = "path",dataType = "Integer",name = "id", value = "订单id", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code=800,message = "订单状态禁止"),
+            @ApiResponse(code=0,message = "成功")
+    })
+    @Audit
+    @PutMapping("/orders/{id}/confirm")
+    public Object putOrderIdConfirm(@LoginUser Long authorization,@PathVariable int id)
+    {
+        ReturnObject returnObject=orderService.putOrderIdConfirm(id);
+
+        if (returnObject.getCode() == ResponseCode.OK) {
+            return Common.getRetObject(returnObject);
+        } else {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+
+    @ApiOperation(value = "买家取消，逻辑删除名下订单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header",dataType = "String",name = "authorization", value = "Token", required = true),
+            @ApiImplicitParam(paramType = "path",dataType = "Integer",name = "id", value = "订单id", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code=800,message = "订单状态禁止"),
+            @ApiResponse(code=0,message = "成功")
+    })
+    @Audit
+    @DeleteMapping("/orders/{id}")
+    public Object DelOrder(@LoginUser Long authorization,@PathVariable int id)
+    {
+        ReturnObject returnObject=orderService.DelOrder(authorization,id);
+
+        if (returnObject.getCode() == ResponseCode.OK) {
+            return Common.getRetObject(returnObject);
+        } else {
+            return Common.decorateReturnObject(returnObject);
+        }
     }
 
     @ApiOperation(value = "买家可以把团购订单转为普通订单")
@@ -173,7 +230,7 @@ public class Ordercontroller {
             @ApiResponse(code=0,message = "成功")
     })
     @Audit
-    @PostMapping(value="/{id}/groupon-normal")
+    @PostMapping(value="/orders/{id}/groupon-normal")
     public Object PostGroupon_Normal(@PathVariable Long id)
     {
         ReturnObject returnObject=orderService.PostGroupon_Normal(id);
@@ -185,6 +242,125 @@ public class Ordercontroller {
         }
     }
 
+    @ApiOperation(value = "店家查询商户所有订单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header",dataType = "String",name = "authorization", value = "Token", required = true),
+            @ApiImplicitParam(paramType = "path",dataType = "Integer",name = "shopId", value = "商户Id", required = true),
+            @ApiImplicitParam(paramType = "query",dataType = "Integer",name = "customerId",value = "查询的购买者用户id"),
+            @ApiImplicitParam(paramType = "query",dataType = "String",name = "orderSn",value = "按订单Sn查询"),
+            @ApiImplicitParam(paramType = "query",dataType = "String",name = "beginTime",value = "开始时间"),
+            @ApiImplicitParam(paramType = "query",dataType = "String",name = "endTime",value = "结束时间"),
+            @ApiImplicitParam(paramType = "query",dataType = "Integer",name = "page",value = "页码",defaultValue = "1"),
+            @ApiImplicitParam(paramType = "query",dataType = "Integer",name = "pageSize",value = "页码大小",defaultValue = "10"),
+    })
+    @ApiResponses({
+            @ApiResponse(code=0,message = "成功")
+    })
+    @Audit
+    @GetMapping(value = "/shops/{shopId}/orders")
+    public Object GetShopOrderList(@LoginUser Long authorization,
+                                   @PathVariable int shopId,
+                                   String orderSn,String beginTime,String endTime,
+                                   int page,int pageSize)
+    {
+        ReturnObject returnObject=orderService.GetShopOrderList(authorization,shopId,orderSn,beginTime,endTime,page,pageSize);
 
+        if (returnObject.getCode() == ResponseCode.OK) {
+            return Common.getRetObject(returnObject);
+        } else {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
 
+    @ApiOperation(value = "店家修改订单留言")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "shopId", value = "商户Id", required = true),
+            @ApiImplicitParam(paramType = "path",dataType = "Integer",name = "id",value = "订单ID",required = true),
+            @ApiImplicitParam(paramType = "body",dataType = "Obeject",name = "message",value = "操作字符",required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code=0,message = "成功")
+    })
+    @Audit
+    @GetMapping(value = "/shops/{shopId}/orders/{id}")
+    public Object PutOrderMessage(@LoginUser Long authorization, @PathVariable int shopid,
+                                  @PathVariable int id, OrderMessage message)
+    {
+        ReturnObject returnObject=orderService.PutOrderMessage(shopid,id,message);
+
+        if (returnObject.getCode() == ResponseCode.OK) {
+            return Common.getRetObject(returnObject);
+        } else {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+    @ApiOperation(value = "店家查询店内订单的详细信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "shopId", value = "商户Id", required = true),
+            @ApiImplicitParam(paramType = "path",dataType = "Integer",name = "id",value = "订单ID",required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code=0,message = "成功")
+    })
+    @Audit
+    @GetMapping(value = "/shops/{shopId}/orders/{id}")
+    public Object GetShopOrderDetail(@LoginUser Long authorization,@PathVariable int shopId,@PathVariable int id)
+    {
+        ReturnObject returnObject=orderService.GetShopOrderDetail(authorization,shopId,id);
+
+        if (returnObject.getCode() == ResponseCode.OK) {
+            return Common.getRetObject(returnObject);
+        } else {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+    @ApiOperation(value = "店家查询店内订单的详细信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "shopId", value = "商户Id", required = true),
+            @ApiImplicitParam(paramType = "path",dataType = "Integer",name = "id",value = "订单ID",required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 800,message = "成功"),
+            @ApiResponse(code=0,message = "成功")
+    })
+    @Audit
+    @DeleteMapping(value = "/shops/{shopId}/orders/{id}")
+    public Object DelShopOrder(@LoginUser Long authorization, @PathVariable int shopId, @PathVariable int id)
+    {
+        ReturnObject returnObject=orderService.DelShopOrder(shopId,id);
+
+        if (returnObject.getCode() == ResponseCode.OK) {
+            return Common.getRetObject(returnObject);
+        } else {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
+
+    @ApiOperation(value = "店家对订单标记发货")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
+            @ApiImplicitParam(paramType = "path", dataType = "Integer", name = "shopId", value = "商户Id", required = true),
+            @ApiImplicitParam(paramType = "path",dataType = "Integer",name = "id",value = "订单ID",required = true),
+            @ApiImplicitParam(paramType = "body",dataType = "Obeject",name = "frightSn",value = "指定发货讯息",required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code=0,message = "成功")
+    })
+    @Audit
+    @PutMapping(value = "/shops/{shopId}/orders/{id}/deliver")
+    public Object putDeliver(@PathVariable int shopId, @PathVariable int id, OrderFreightSn orderFreightSn)
+    {
+        ReturnObject returnObject=orderService.putDeliver(shopId,id,orderFreightSn);
+
+        if (returnObject.getCode() == ResponseCode.OK) {
+            return Common.getRetObject(returnObject);
+        } else {
+            return Common.decorateReturnObject(returnObject);
+        }
+    }
 }
