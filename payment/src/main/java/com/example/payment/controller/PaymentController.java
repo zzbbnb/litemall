@@ -6,6 +6,7 @@ import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.payment.dao.PaymentDao;
 import com.example.payment.model.vo.PayPatternAndNameRetVo;
 import com.example.payment.service.PaymentService;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,13 @@ public class PaymentController {
     * @Author: alex101
     * @Date: 2020/12/16
     */
+    @ApiOperation(value = "获取支付单的所有状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+    })
     @Audit
     @GetMapping("states")
     public Object getAllPaymentState()
@@ -41,6 +49,14 @@ public class PaymentController {
 
     }
 
+
+    @ApiOperation(value = "获取支付渠道")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "成功"),
+    })
     /** 
     * @Description: 获取所有支付方式
     * @Param: [] 

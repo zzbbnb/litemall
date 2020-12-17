@@ -1,5 +1,6 @@
 package com.example.payment.model.vo;
 
+import com.example.payment.model.bo.PaymentBo;
 import lombok.Data;
 
 import java.util.Date;
@@ -36,6 +37,18 @@ public class PaymentRetVo {
 
     private Date gmtModified;
 
-    public PaymentRetVo() {
+    public PaymentRetVo(PaymentBo bo) {
+        id = bo.getId();
+        orderId = bo.getOrderId();
+        aftersaleId = bo.getAftersaleId();
+        amount = bo.getAmount();
+        actualAmount = bo.getActualAmount();
+        payTime = bo.getPayTime();
+        paymentPattern = bo.getPaymentPattern();
+        state = bo.getState();
+        beginTime = bo.getBeginTime();
+        endTime = bo.getEndTime();
+        gmtCreate = bo.getGmtCreate();
+        gmtModified = bo.getGmtModified();
     }
 }
