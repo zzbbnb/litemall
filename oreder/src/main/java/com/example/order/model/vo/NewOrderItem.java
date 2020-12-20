@@ -10,16 +10,16 @@ import lombok.Data;
  */
 @Data
 public class NewOrderItem {
-    private int skuId;
+    private Long skuId;
     private int quantity;
-    private int couponActId;
+    private Long couponActId;
 
     public NewOrderItemBo createNewOrderItemBo()
     {
         NewOrderItemBo newOrderItemBo =new NewOrderItemBo();
-        newOrderItemBo.setGoodsSkuId((long)skuId);
+        newOrderItemBo.setGoodsSkuId(skuId);
         newOrderItemBo.setQuantity(quantity);
-        newOrderItemBo.setCouponActivityId((long)couponActId);
+        newOrderItemBo.setCouponActivityId(couponActId);
 
         return  newOrderItemBo;
     }

@@ -21,9 +21,9 @@ public class OrderDetail {
 
     private shop shops;
     private Long pid;
-    private int orderType;
-    private int state;
-    private int subState;
+    private Byte orderType;
+    private Byte state;
+    private Byte subState;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
     private LocalDateTime confirmTime;

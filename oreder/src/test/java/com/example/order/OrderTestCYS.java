@@ -3,6 +3,7 @@ package com.example.order;
 import cn.edu.xmu.ooad.util.JwtHelper;
 import cn.edu.xmu.ooad.util.ResponseCode;
 import com.example.order.mapper.OrdersMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = OrederApplication.class)
 @Transactional
+@Slf4j
 public class OrderTestCYS {
 
     @Autowired
@@ -34,11 +36,12 @@ public class OrderTestCYS {
     public void setDefaultFreightModel1() throws Exception {
         String token = new JwtHelper().createToken(1L, 0L, 100);
         String responseString = this.mvc.perform(get("/orders")
-                .header("authorization", token)
-                .queryParam("orderSn","2016102364965"))
+                .header("authorization", token))
+                //.queryParam("orderSn","2016102364965"))
                 //.andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
+        log.debug(responseString);
     }
 
 /*    @Test

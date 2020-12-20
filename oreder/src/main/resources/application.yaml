@@ -5,20 +5,20 @@ server:
       max: 1000
 
 dubbo:
-  # ÅäÖÃ·şÎñĞÅÏ¢
+  # é…ç½®æœåŠ¡ä¿¡æ¯
   application:
     name: order
-    # ½ûÓÃQOSÍ¬Ò»Ì¨»úÆ÷¿ÉÄÜ»áÓĞ¶Ë¿Ú³åÍ»ÏÖÏó
+    # ç¦ç”¨QOSåŒä¸€å°æœºå™¨å¯èƒ½ä¼šæœ‰ç«¯å£å†²çªç°è±¡
     qos-enable: false
     qos-accept-foreign-ip: false
-  # ÅäÖÃ×¢²áÖĞĞÄ
+  # é…ç½®æ³¨å†Œä¸­å¿ƒ
   registry:
     address: spring-cloud://localhost
-  # ÉèÖÃĞ­Òé-Ğ­ÒéÓÉÌá¹©·½Ö¸¶¨Ïû·Ñ·½±»¶¯½ÓÊÜ
+  # è®¾ç½®åè®®-åè®®ç”±æä¾›æ–¹æŒ‡å®šæ¶ˆè´¹æ–¹è¢«åŠ¨æ¥å—
   #protocol:
   #  name: dubbo
-   # port: 20880
-    # ÉèÖÃ³¬Ê±Ê±¼ä
+  # port: 20880
+  # è®¾ç½®è¶…æ—¶æ—¶é—´
   consumer:
     timeout: 4000
     check: false
@@ -31,34 +31,34 @@ spring:
     #name: order
     url: jdbc:mysql://localhost:3306/order?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
     username: root
-    password: password
+    password: 81577215z
     #schema: classpath:schema.sql
     #data: classpath:testdata.sql
     druid:
-      #³õÊ¼»¯Ê±½¨Á¢ÎïÀíÁ¬½ÓµÄ¸öÊı
+      #åˆå§‹åŒ–æ—¶å»ºç«‹ç‰©ç†è¿æ¥çš„ä¸ªæ•°
       initial-size: 3
-      #×îĞ¡Á¬½Ó³ØÊıÁ¿
+      #æœ€å°è¿æ¥æ± æ•°é‡
       min-idle: 3
-      #×î´óÁ¬½Ó³ØÊıÁ¿
+      #æœ€å¤§è¿æ¥æ± æ•°é‡
       max-active: 100
-      #»ñÈ¡Á¬½ÓÊ±×î´óµÈ´ıÊ±¼ä
+      #è·å–è¿æ¥æ—¶æœ€å¤§ç­‰å¾…æ—¶é—´
       max-wait: 60000
       filter:
         stat:
-          #ÊÇ·ñ¿ªÆôÂısql²éÑ¯¼à¿Ø
+          #æ˜¯å¦å¼€å¯æ…¢sqlæŸ¥è¯¢ç›‘æ§
           log-slow-sql: true
-          #ÂıSQLÖ´ĞĞÊ±¼ä
+          #æ…¢SQLæ‰§è¡Œæ—¶é—´
           slow-sql-millis: 100
       validation-query: select 1
     sql-script-encoding: UTF-8
 
 mybatis:
-  #po¶ÔÏóµÄ°ü
+  #poå¯¹è±¡çš„åŒ…
   type-aliases-package: com.example.order.model.po
-  #mapper.xmlËùÔÚµÄÎ»ÖÃ
+  #mapper.xmlæ‰€åœ¨çš„ä½ç½®
   mapper-locations: classpath*:com.example.order.mapper/*.xml
-  #×Ô¶¯½«SQLÖĞ²é³öÀ´µÄ´øÏÂ»®ÏßµÄ×Ö¶Î£¬×ª»»ÎªÍÕ·å±êÖ¾£¬ÔÙÈ¥Æ¥ÅäÀàÖĞµÄÊôĞÔ
+  #è‡ªåŠ¨å°†SQLä¸­æŸ¥å‡ºæ¥çš„å¸¦ä¸‹åˆ’çº¿çš„å­—æ®µï¼Œè½¬æ¢ä¸ºé©¼å³°æ ‡å¿—ï¼Œå†å»åŒ¹é…ç±»ä¸­çš„å±æ€§
   configuration:
-    #Êä³ö²úÉúµÄSQL
+    #è¾“å‡ºäº§ç”Ÿçš„SQL
     #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true

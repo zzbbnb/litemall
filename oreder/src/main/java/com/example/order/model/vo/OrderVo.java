@@ -21,7 +21,7 @@ public class OrderVo {
     private String address;
     private String mobile;
     private String message;
-    private int orderType;
+    private Byte orderType;
     private Long freightPrice;
     private Long couponId;
     private Long couponActivityId;
@@ -32,9 +32,9 @@ public class OrderVo {
     private Integer rebateNum;
     private LocalDateTime confirmTime;
     private String shipmentSn;
-    private int state;
-    private int substate;
-    private int beDeleted;
+    private Byte state;
+    private Byte substate;
+    private Byte beDeleted;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
     private Long grouponId;

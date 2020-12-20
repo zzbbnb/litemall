@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class modifyOrder {
     private String consignee;
-    private int regionId;
+    private Long regionId;
     private String address;
     private String mobile;
 }

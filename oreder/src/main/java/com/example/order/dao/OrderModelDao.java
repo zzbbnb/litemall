@@ -4,10 +4,7 @@ import cn.edu.xmu.ooad.util.ResponseCode;
 import cn.edu.xmu.ooad.util.ReturnObject;
 import com.example.order.mapper.OrderItemMapper;
 import com.example.order.mapper.OrdersMapper;
-import com.example.order.model.bo.NewOrder;
-import com.example.order.model.bo.NewOrderItemBo;
-import com.example.order.model.bo.OrderBo;
-import com.example.order.model.bo.OrderItemBo;
+import com.example.order.model.bo.*;
 import com.example.order.model.po.OrderItem;
 import com.example.order.model.po.OrderItemExample;
 import com.example.order.model.po.Orders;
@@ -22,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -90,7 +88,7 @@ public class OrderModelDao {
         ReturnObject returnObject;
         OrdersExample ordersExample=new OrdersExample();
         OrdersExample.Criteria criteria=ordersExample.createCriteria();
-        criteria.andIdEqualTo(id);
+        criteria.andCustomerIdEqualTo(id);
 
         List<Orders> list = null;
         list=ordersMapper.selectByExample(ordersExample);
@@ -104,14 +102,14 @@ public class OrderModelDao {
         else //根据条件筛选订单，list1为最终结果集合
         {
             //如果指定sn
-            if(orderSn.length()>0)
+            if(orderSn!=null&&orderSn.length()>0)
             {
-                for(Orders orders:list)
-                {
-                    if (orders.getOrderSn().equals(orderSn))
+                Iterator<Orders> iterator = list.iterator();
+                while(iterator.hasNext()){
+                    Orders orders = iterator.next();
+                    if (!(orders.getOrderSn().equals(orderSn)))
                     {
-                        list.clear();
-                        list.add(orders);
+                        iterator.remove();
                     }
                 }
             }
@@ -124,8 +122,9 @@ public class OrderModelDao {
                 Duration duration1;
                 Duration duration2;
                 Duration duration_begin_end=Duration.between(begin,end);
-                for(Orders orders:list)
-                {
+                Iterator<Orders> iterator = list.iterator();
+                while(iterator.hasNext()){
+                    Orders orders = iterator.next();
                     duration1=Duration.between(begin,orders.getGmtCreate());
                     duration2=Duration.between(orders.getGmtCreate(),end);
                     if(!(duration_begin_end.toMinutes()>duration1.toMinutes()&&duration_begin_end.toMinutes()>duration2.toMinutes()))
@@ -138,24 +137,30 @@ public class OrderModelDao {
             Iterator<Orders> iterator = list.iterator();
             while(iterator.hasNext()){
                 Orders orders = iterator.next();
-                Byte i=0;
-                //Byte n=state.byteValue();
-                Byte n=3;
-                if(orders.getBeDeleted().equals(i)||orders.getState().equals(n))
+                //0未删除 1已删除
+                Byte i=1;
+                //用于存储判断的状态的bool值
+                boolean flag_state;
+                if(state==null)
+                {
+                    flag_state=false;
+                }
+                else
+                {
+                    Byte n=state.byteValue();
+                    if (orders.getState().equals(n))
+                    {
+                        flag_state=false;
+                    }
+                    else {
+                        flag_state=true;
+                    }
+                }
+                if(orders.getBeDeleted().equals(i)||flag_state)
                 {
                     iterator.remove();   //注意这个地方
                 }
             }
-            /*for(Orders orders:list)
-            {
-                Byte i=0;
-                //Byte n=state.byteValue();
-                Byte n=4;
-                if(orders.getBeDeleted().equals(i)||orders.getState().equals(n))
-                {
-                    list.remove(orders);
-                }
-            }*/
             //计算总页面和总数
             pages=list.size()/pageSize;
             if(list.size()%pageSize!=0) {
@@ -164,7 +169,7 @@ public class OrderModelDao {
             total=list.size();
             //根据页码和页面大小进行设置
             //list1为最终返回集合
-            List<Orders> list1=null;
+            List<Orders> list1= new ArrayList<>();
             int page1=1;
             int i=1;
             for(Orders orders:list)
@@ -184,7 +189,7 @@ public class OrderModelDao {
                 }
             }
             //包装data
-            OrderListModel orderListModel=new OrderListModel();
+            OrderListBo orderListModel=new OrderListBo();
             orderListModel.setPage(page);
             orderListModel.setPages(pages);
             orderListModel.setPageSize(pageSize);
@@ -197,7 +202,6 @@ public class OrderModelDao {
             returnObject=new ReturnObject<>(orderListModel);
             return returnObject;
         }
-
     }
 
     /**

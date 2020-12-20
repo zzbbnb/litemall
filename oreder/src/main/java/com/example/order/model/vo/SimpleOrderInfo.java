@@ -14,8 +14,8 @@ public class SimpleOrderInfo {
     private Long customerId;
     //母单id
     private Long pid;
-    private int orderType;
-    private int state;
+    private Byte orderType;
+    private Byte state;
     private LocalDateTime gmtCreate;
     private Long originPrice;
     private Long discountPrice;

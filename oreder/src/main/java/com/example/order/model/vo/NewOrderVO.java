@@ -12,13 +12,13 @@ import java.util.List;
 public class NewOrderVO {
     private List<NewOrderItem> list;
     private String consignee;
-    private int regionId;
+    private Long regionId;
     private String address;
     private String mobile;
     private String message;
-    private int couponId;
-    private int presaleId;
-    private int grouponId;
+    private Long couponId;
+    private Long presaleId;
+    private Long grouponId;
 
     public NewOrder createNewOrder()
     {
@@ -28,9 +28,9 @@ public class NewOrderVO {
         newOrder.setAddress(address);
         newOrder.setMobile(mobile);
         newOrder.setMessage(message);
-        newOrder.setCouponId((long)couponId);
-        newOrder.setPresaleId((long)presaleId);
-        newOrder.setGrouponId((long)grouponId);
+        newOrder.setCouponId(couponId);
+        newOrder.setPresaleId(presaleId);
+        newOrder.setGrouponId(grouponId);
 
         newOrder.setList(list);
 
