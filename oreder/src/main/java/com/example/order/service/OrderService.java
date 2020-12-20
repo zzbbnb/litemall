@@ -37,10 +37,11 @@ public class OrderService {
 
 
     @Transactional
-    public ReturnObject GetListOrder(Long id,String orderSn,int state,
-                                     String begintime,String endtime,int page,int pageSize)
+    public ReturnObject GetListOrder(Long id,String orderSn,Integer state,
+                                     String begintime,String endtime,Integer page,Integer pageSize)
     {
         return orderModeldao.GetListOrder(id,orderSn,state,begintime,endtime,page,pageSize);
+        //return new ReturnObject(String.valueOf(55));
     }
 
     @Transactional

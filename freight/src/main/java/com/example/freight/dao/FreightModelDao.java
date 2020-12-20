@@ -110,7 +110,7 @@ public class FreightModelDao {
         }else if(!freightModelPo.getShopId().equals(shopId)) {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
             logger.error("freightModel shop Id:" + freightModelPo.getShopId() + " not equal to path shop Id:" + shopId);
-        }else {
+        } else {
             FreightModelBo freightModelBo = new FreightModelBo(freightModelPo);
             returnObject = new ReturnObject<>(freightModelBo);
         }

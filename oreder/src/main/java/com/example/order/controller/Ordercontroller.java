@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
@@ -29,7 +30,8 @@ import java.time.LocalDateTime;
  * @return
  */
 
-@Controller
+@Api(value = "订单服务", tags = "litemall")
+@RestController
 @RequestMapping(produces = "application/json;charset=UTF-8")
 public class Ordercontroller {
 
@@ -69,13 +71,14 @@ public class Ordercontroller {
 
     @ApiOperation(value = "买家名下的订单概要")
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header",dataType = "String",name = "authorization", value = "Token", required = true),
+            //@ApiImplicitParam(paramType = "header",dataType = "String",name = "authorization", value = "Token", required = true),
+            @ApiImplicitParam(paramType = "header", dataType = "String", name = "authorization", value = "Token", required = true),
             @ApiImplicitParam(name = "orderSn",value ="订单编号",dataType = "String",paramType = "query"),
-            @ApiImplicitParam(name = "state",value ="订单状态",dataType = "Integer",paramType = "query"),
+            @ApiImplicitParam(name = "state",value ="订单状态",dataType = "Integer",paramType = "query",defaultValue = "1"),
             @ApiImplicitParam(name = "beginTime",value ="开始时间",dataType = "String",paramType = "query"),
-            @ApiImplicitParam(name = "endTime",value ="结束时间",dataType = "String",paramType = "query"),
-            @ApiImplicitParam(name = "page",value ="页码",dataType = "Integer",paramType = "query"),
-            @ApiImplicitParam(name = "pageSize",value ="每页数目",dataType = "Integer",paramType = "query")
+            @ApiImplicitParam(name = "endTime",value ="结束时间",dataType = "String",paramType = "query",defaultValue = "1"),
+            @ApiImplicitParam(name = "page",value ="页码",dataType = "Integer",paramType = "query",defaultValue = "1"),
+            @ApiImplicitParam(name = "pageSize",value ="每页数目",dataType = "Integer",required = false,paramType = "query",defaultValue = "10",example = "10")
     })
     @ApiResponses({
             @ApiResponse(code = 0, message = "成功")
@@ -83,10 +86,20 @@ public class Ordercontroller {
     @Audit
     @GetMapping(value = "/orders")
     @ResponseBody
-    public Object getOrderList(@LoginUser Long authorization,String orderSn,int state,
-                               String beginTime,String endTime,int page,int pageSize)
+    public Object getOrderList(@LoginUser @ApiIgnore Long id, String orderSn, Integer state,
+                               String beginTime, String endTime, Integer page, Integer pageSize)
     {
-        ReturnObject returnObject=orderService.GetListOrder(authorization,orderSn,state,beginTime,endTime,page,pageSize);
+        if(page==null)
+        {
+            page=1;
+        }
+        if ((pageSize==null))
+        {
+            pageSize=10;
+        }
+        ReturnObject returnObject;
+        id=1L;
+        returnObject=orderService.GetListOrder(id,orderSn,state,beginTime,endTime,page,pageSize);
         if (returnObject.getCode() == ResponseCode.OK) {
             return Common.getRetObject(returnObject);
         } else {
@@ -164,7 +177,7 @@ public class Ordercontroller {
     })
     @Audit
     @PutMapping(value = "/orders/{id}")
-    public Object modifyOrder(@LoginUser Long authorization, @PathVariable int id, modifyOrder order)
+    public Object modifyOrder(@LoginUser Long authorization, @PathVariable int id,@RequestBody modifyOrder order)
     {
         ReturnObject returnObject=orderService.modifyOrder(id,order);
 
@@ -283,9 +296,9 @@ public class Ordercontroller {
             @ApiResponse(code=0,message = "成功")
     })
     @Audit
-    @GetMapping(value = "/shops/{shopId}/orders/{id}")
+    @PutMapping(value = "/shops/{shopId}/orders/{id}")
     public Object PutOrderMessage(@LoginUser Long authorization, @PathVariable int shopid,
-                                  @PathVariable int id, OrderMessage message)
+                                  @PathVariable int id,@RequestBody OrderMessage message)
     {
         ReturnObject returnObject=orderService.PutOrderMessage(shopid,id,message);
 
@@ -353,7 +366,7 @@ public class Ordercontroller {
     })
     @Audit
     @PutMapping(value = "/shops/{shopId}/orders/{id}/deliver")
-    public Object putDeliver(@PathVariable int shopId, @PathVariable int id, OrderFreightSn orderFreightSn)
+    public Object putDeliver(@PathVariable int shopId, @PathVariable int id,@RequestBody OrderFreightSn orderFreightSn)
     {
         ReturnObject returnObject=orderService.putDeliver(shopId,id,orderFreightSn);
 

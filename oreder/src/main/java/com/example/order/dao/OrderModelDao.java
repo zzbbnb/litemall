@@ -16,11 +16,13 @@ import com.example.order.model.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
 import java.util.List;
 
 /***
@@ -28,6 +30,7 @@ import java.util.List;
  * @time 2020-12-12 11:29
  * @return
  */
+//@Component
 @Repository
 public class OrderModelDao {
 
@@ -81,8 +84,8 @@ public class OrderModelDao {
     * @Author: yansong chen
     * @Date: 2020-12-16 21:23
     */
-    public ReturnObject GetListOrder(Long id,String orderSn,int state,
-                                     String begintime,String endtime,int page,int pageSize)
+    public ReturnObject GetListOrder(Long id,String orderSn,Integer state,
+                                     String begintime,String endtime,Integer page,Integer pageSize)
     {
         ReturnObject returnObject;
         OrdersExample ordersExample=new OrdersExample();
@@ -113,29 +116,46 @@ public class OrderModelDao {
                 }
             }
             //筛选符合时间条件的订单
-            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime begin=LocalDateTime.parse(begintime,df);
-            LocalDateTime end=LocalDateTime.parse(endtime,df);
-            Duration duration1;
-            Duration duration2;
-            Duration duration_begin_end=Duration.between(begin,end);
-            for(Orders orders:list)
+            if (begintime!=null&&endtime!=null)
             {
-                duration1=Duration.between(begin,orders.getGmtCreate());
-                duration2=Duration.between(orders.getGmtCreate(),end);
-                if(!(duration_begin_end.toMinutes()>duration1.toMinutes()&&duration_begin_end.toMinutes()>duration2.toMinutes()))
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDateTime begin=LocalDateTime.parse(begintime,df);
+                LocalDateTime end=LocalDateTime.parse(endtime,df);
+                Duration duration1;
+                Duration duration2;
+                Duration duration_begin_end=Duration.between(begin,end);
+                for(Orders orders:list)
                 {
-                    list.remove(orders);
+                    duration1=Duration.between(begin,orders.getGmtCreate());
+                    duration2=Duration.between(orders.getGmtCreate(),end);
+                    if(!(duration_begin_end.toMinutes()>duration1.toMinutes()&&duration_begin_end.toMinutes()>duration2.toMinutes()))
+                    {
+                        list.remove(orders);
+                    }
                 }
             }
             //去除已经被逻辑删除的订单 去除不符合状态的订单
-            for(Orders orders:list)
+            Iterator<Orders> iterator = list.iterator();
+            while(iterator.hasNext()){
+                Orders orders = iterator.next();
+                Byte i=0;
+                //Byte n=state.byteValue();
+                Byte n=3;
+                if(orders.getBeDeleted().equals(i)||orders.getState().equals(n))
+                {
+                    iterator.remove();   //注意这个地方
+                }
+            }
+            /*for(Orders orders:list)
             {
-                if(orders.getBeDeleted()==1||orders.getState()!=state)
+                Byte i=0;
+                //Byte n=state.byteValue();
+                Byte n=4;
+                if(orders.getBeDeleted().equals(i)||orders.getState().equals(n))
                 {
                     list.remove(orders);
                 }
-            }
+            }*/
             //计算总页面和总数
             pages=list.size()/pageSize;
             if(list.size()%pageSize!=0) {
@@ -169,11 +189,12 @@ public class OrderModelDao {
             orderListModel.setPages(pages);
             orderListModel.setPageSize(pageSize);
             orderListModel.setTotal(total);
-            for (Orders orders:list1)
-            {
+            Iterator<Orders> iterator1 = list.iterator();
+            while(iterator1.hasNext()){
+                Orders orders = iterator1.next();
                 orderListModel.getOrderListModelItems().add(new OrderListModelItem(orders));
             }
-            returnObject=new ReturnObject(orderListModel);
+            returnObject=new ReturnObject<>(orderListModel);
             return returnObject;
         }
 
