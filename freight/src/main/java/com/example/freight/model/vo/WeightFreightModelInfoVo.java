@@ -15,7 +15,6 @@ import javax.validation.constraints.NotNull;
 public class WeightFreightModelInfoVo
 {
     @Min(value = 0,message = "首重大于0")
-    @NotNull(message = "首重不得为空")
     Long firstWeight;
     Long firstWeightFreight;
     Long tenPrice;
@@ -23,7 +22,6 @@ public class WeightFreightModelInfoVo
     Long hundredPrice;
     Long trihunPrice;
     Long abovePrice;
-    @NotNull(message= "regionId不得为空")
     Long regionId;
 
 }

@@ -43,7 +43,7 @@ public class FreightService {
     * @Author: alex101
     * @Date: 2020/12/9 
     */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public ReturnObject setDefaultFreightModel(Long shopId, Long id) {
         return freightModelDao.setDefaultFreightModel(shopId,id);
     }
@@ -67,7 +67,7 @@ public class FreightService {
     * @Author: alex101
     * @Date: 2020/12/12
     */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public ReturnObject addFreightModel(Long id,FreightModelInfoVo vo)
     {
         return freightModelDao.addFreightModel(id,vo);
@@ -194,7 +194,7 @@ public class FreightService {
          return ret;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public  ReturnObject modifyFreightModel(Long shopId, Long id,FreightModelInfoVo vo)
     {
         return freightModelDao.modifyFreightModel(shopId,id,vo);
@@ -205,7 +205,7 @@ public class FreightService {
         return freightModelDao.deleteFreightModel(shopId,id);
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public ReturnObject addWeightItem(Long shopId, Long id, WeightFreightModelInfoVo vo)
     {
         return weightFreightDao.insertWeightItems(shopId,id,vo);
