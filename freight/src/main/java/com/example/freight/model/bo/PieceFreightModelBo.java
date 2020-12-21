@@ -32,7 +32,7 @@ public class PieceFreightModelBo implements VoObject, FreightModelDetail
     {
         id = pieceFreightModelPo.getId();
         regionId = pieceFreightModelPo.getRegionId();
-        freight_model_id = pieceFreightModelPo.getFreightModelId();
+        freightModelId = pieceFreightModelPo.getFreightModelId();
         firstItem = pieceFreightModelPo.getFirstItems();
         firstItemPrice = pieceFreightModelPo.getFirstItemsPrice();
         additionalItems = pieceFreightModelPo.getAdditionalItems();

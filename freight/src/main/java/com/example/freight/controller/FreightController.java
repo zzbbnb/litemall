@@ -81,8 +81,7 @@ public class FreightController {
 
     }
 
-
-
+    
     /** 
     * @Description: 返回模板概要
     * @Param: [shopId, id] 
