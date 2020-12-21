@@ -161,14 +161,17 @@ public class PieceFreightDao
         if(pieceFreightModelPo == null)
         {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }else {
+            FreightModelPo freightModelPo = freightModelMapper.selectById(pieceFreightModelPo.getFreightModelId());
+            if(!freightModelPo.getShopId().equals(shopId) )
+            {
+                returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            }else {
+                pieceFreightModelMapper.delete(queryWrapper);
+                returnObject = new ReturnObject<>(ResponseCode.OK);
+            }
         }
-        FreightModelPo freightModelPo = freightModelMapper.selectById(pieceFreightModelPo.getFreightModelId());
-        if(freightModelPo.getShopId() != shopId)
-        {
-            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
-        }
-        pieceFreightModelMapper.delete(queryWrapper);
-        returnObject = new ReturnObject<>(ResponseCode.OK);
+
         return returnObject;
     }
 }

@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 @Data
 public class PieceFreightModelInfoVo
 {
-    @NotNull
     private Long regionId;
     private int firstItem;
     private Long firstItemPrice;

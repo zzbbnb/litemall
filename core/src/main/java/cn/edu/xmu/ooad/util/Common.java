@@ -189,6 +189,11 @@ public class Common {
                 return new ResponseEntity(
                         ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
                         HttpStatus.INTERNAL_SERVER_ERROR);
+            case RESOURCE_ID_OUTSCOPE:
+                //505 不是自己的对象
+                return new ResponseEntity(
+                        ResponseUtil.fail(returnObject.getCode(), returnObject.getErrmsg()),
+                        HttpStatus.FORBIDDEN);
             case OK:
                 // 200: 无错误
                 Object data = returnObject.getData();

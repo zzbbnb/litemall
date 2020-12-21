@@ -65,6 +65,7 @@ public class FreightModelDao {
         if(freightModelPo==null)
         {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+            logger.error("set 505");
             logger.error("not found freightModel shopid = "+shopId+" id = "+id);
         }else if(!freightModelPo.getShopId().equals(shopId)) {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
@@ -75,7 +76,7 @@ public class FreightModelDao {
         } else{
             /*将原始的默认模板取消*/
             UpdateWrapper<FreightModelPo> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.eq("default_model",true).set("default_model",false).set("gmt_modified",LocalDateTime.now());
+            updateWrapper.eq("default_model",true).eq("shop_id",shopId).set("default_model",false).set("gmt_modified",LocalDateTime.now());
             freightModelMapper.update(null,updateWrapper);
 
             // 设置新默认模板
@@ -137,6 +138,7 @@ public class FreightModelDao {
         queryWrapper.eq("name",freightModelPo.getName());
         int count = freightModelMapper.selectCount(queryWrapper);
         if(count>0){
+            logger.info("same freight name "+freightModelPo.getName());
             returnObject = new ReturnObject(ResponseCode.FREIGHTNAME_SAME);
         }else {
             freightModelMapper.insert(freightModelPo);
@@ -191,16 +193,6 @@ public class FreightModelDao {
      */
     public ReturnObject modifyFreightModel(Long shopId, Long id, FreightModelInfoVo freightModelInfoVo) {
         ReturnObject returnObject;
-
-        QueryWrapper<FreightModelPo> queryWrapper = new QueryWrapper<FreightModelPo>().eq("name", freightModelInfoVo.getName());
-        int cnt = freightModelMapper.selectCount(queryWrapper);
-        if(cnt>0)
-        {
-            logger.error("same name = " + shopId + " id = " + id +" name = "+freightModelInfoVo.getName());
-            returnObject = new ReturnObject<>(ResponseCode.FREIGHTNAME_SAME);
-            return returnObject;
-        }
-
         FreightModelPo freightModelPo = freightModelMapper.selectById(id);
         if(freightModelPo==null) {
             logger.error("not found freightModel shopid = " + shopId + " id = " + id);
@@ -209,12 +201,21 @@ public class FreightModelDao {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
             logger.error("freightModel shop Id:" + freightModelPo.getShopId() + " not equal to path shop Id:" + shopId);
         }else {
+            QueryWrapper<FreightModelPo> queryWrapper = new QueryWrapper<FreightModelPo>().eq("name", freightModelInfoVo.getName());
+            int cnt = freightModelMapper.selectCount(queryWrapper);
+            if(cnt>0)
+            {
+                logger.error("same name = " + shopId + " id = " + id +" name = "+freightModelInfoVo.getName());
+                returnObject = new ReturnObject<>(ResponseCode.FREIGHTNAME_SAME);
+                return returnObject;
+            }
             freightModelPo.setGmtModified(LocalDateTime.now());
             freightModelPo.setUnit(freightModelInfoVo.getUnit());
             freightModelPo.setName(freightModelInfoVo.getName());
             freightModelMapper.updateById(freightModelPo);
             returnObject = new ReturnObject<>(ResponseCode.OK);
         }
+
         return returnObject;
     }
 
@@ -268,8 +269,10 @@ public class FreightModelDao {
         else
         {
             FreightModelPo freightModelPo2 = freightModelPo.objectClone();
-            freightModelPo2.setGmtCreate(LocalDateTime.now());
-            freightModelPo2.setGmtModified(LocalDateTime.now());
+            freightModelPo2.setGmtCreate(LocalDateTime.now().withNano(0));
+            freightModelPo2.setGmtModified(LocalDateTime.now().withNano(0));
+            logger.info("get gmtcreate time :"+freightModelPo2.getGmtCreate());
+            logger.info("get modified time :"+freightModelPo2.getGmtModified());
             freightModelPo2.setName(freightModelPo.getName() + UUID.randomUUID());
             freightModelMapper.insert(freightModelPo2);
             FreightModelBo freightModelBo = new FreightModelBo(freightModelPo2);

@@ -53,7 +53,7 @@ public class WeightFreightDao {
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
             logger.error("freightModel shop Id:"+freightModelPo.getShopId()+" not equal to path shop Id:"+shopId);
         }else {
-            QueryWrapper<WeightFreightModelPo> queryWrapper = new QueryWrapper<WeightFreightModelPo>().eq("regionId",vo.getRegionId());
+            QueryWrapper<WeightFreightModelPo> queryWrapper = new QueryWrapper<WeightFreightModelPo>().eq("region_id",vo.getRegionId()).eq("freight_model_id",id);
             int cnt = weightFreightModelMapper.selectCount(queryWrapper);
             if(cnt!=0)
             {
@@ -168,6 +168,7 @@ public class WeightFreightDao {
      */
     public ReturnObject delWeightItems(Long shopId, Long id)
     {
+        logger.info("in delWeightItems dao");
         ReturnObject returnObject;
         QueryWrapper<WeightFreightModelPo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("id", id);
@@ -175,15 +176,25 @@ public class WeightFreightDao {
 
         if(weightFreightModelPo == null)
         {
+            logger.info("weightFreigtmodelpo is null");
             returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_NOTEXIST);
+        }else {
+            logger.info("ready to select freight model by id");
+            FreightModelPo freightModelPo = freightModelMapper.selectById(weightFreightModelPo.getFreightModelId());
+
+            logger.info("freight Model shop id "+freightModelPo.getShopId());
+            logger.info(freightModelPo.toString());
+
+            if(!freightModelPo.getShopId().equals(shopId))
+            {
+                returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
+            }else {
+                weightFreightModelMapper.delete(queryWrapper);
+                returnObject = new ReturnObject<>(ResponseCode.OK);
+            }
         }
-        FreightModelPo freightModelPo = freightModelMapper.selectById(weightFreightModelPo.getFreightModelId());
-        if(freightModelPo.getShopId() != shopId)
-        {
-            returnObject = new ReturnObject<>(ResponseCode.RESOURCE_ID_OUTSCOPE);
-        }
-        weightFreightModelMapper.delete(queryWrapper);
-        returnObject = new ReturnObject<>(ResponseCode.OK);
+
+
         return returnObject;
     }
 }
