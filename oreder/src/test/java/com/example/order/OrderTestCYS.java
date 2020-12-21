@@ -41,6 +41,7 @@ public class OrderTestCYS {
                 //.andExpect(status().is4xxClientError())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andReturn().getResponse().getContentAsString();
+        System.out.println(responseString);
         log.debug(responseString);
     }
 

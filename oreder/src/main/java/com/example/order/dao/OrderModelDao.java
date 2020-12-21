@@ -618,4 +618,32 @@ public class OrderModelDao {
         returnObject=new ReturnObject();
         return returnObject;
     }
+
+    //duboo服务需要的方法
+    public Long GetShopIdByOrderId(Long id)
+    {
+        OrdersExample example=new OrdersExample();
+        OrdersExample.Criteria criteria=example.createCriteria();
+        criteria.andOrderSnEqualTo(String.valueOf(id));
+        List<Orders> list=ordersMapper.selectByExample(example);
+        Long i = null;
+        for(Orders orders:list)
+        {
+            i= orders.getShopId();
+        }
+        return i;
+    }
+
+    public Long GetUserIdByOrderId(Long id) {
+        OrdersExample example=new OrdersExample();
+        OrdersExample.Criteria criteria=example.createCriteria();
+        criteria.andOrderSnEqualTo(String.valueOf(id));
+        List<Orders> list=ordersMapper.selectByExample(example);
+        Long i = null;
+        for(Orders orders:list)
+        {
+            i= orders.getCustomerId();
+        }
+        return i;
+    }
 }

@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @MapperScan("com.example.order.mapper")
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"cn.edu.xmu.ooad","com.example.order"})
 public class OrederApplication {
 
     public static void main(String[] args) {

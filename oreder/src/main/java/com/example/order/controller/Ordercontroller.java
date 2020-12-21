@@ -86,10 +86,14 @@ public class Ordercontroller {
     @Audit
     @GetMapping(value = "/orders")
     @ResponseBody
-    public Object getOrderList(@LoginUser @ApiIgnore Long id, String orderSn, Integer state,
-                               String beginTime, String endTime, Integer page, Integer pageSize)
+    public Object getOrderList(@LoginUser @ApiIgnore Long id,
+                               String orderSn, Integer state,
+                               String beginTime,
+                               String endTime,
+                               @RequestParam(required = false,defaultValue = "1") Integer page,
+                               @RequestParam(required = false,defaultValue = "10")Integer pageSize)
     {
-        if(page==null)
+/*        if(page==null)
         {
             page=1;
         }
@@ -97,8 +101,9 @@ public class Ordercontroller {
         {
             pageSize=10;
         }
+
+        id=1L;*/
         ReturnObject returnObject;
-        id=1L;
         returnObject=orderService.GetListOrder(id,orderSn,state,beginTime,endTime,page,pageSize);
         if (returnObject.getCode() == ResponseCode.OK) {
             return Common.getRetObject(returnObject);
